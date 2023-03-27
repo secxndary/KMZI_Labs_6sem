@@ -2,10 +2,10 @@
 public class Entropy
 {
 
-    public static double GetShannonEntropy(string s)
+    public static double GetShannonEntropy(string str)
     {
         var symbolAppearances = new Dictionary<char, int>();
-        foreach (char c in s)
+        foreach (char c in str)
         {
             if (!symbolAppearances.ContainsKey(c))
                 symbolAppearances.Add(c, 1);
@@ -13,14 +13,13 @@ public class Entropy
                 symbolAppearances[c] += 1;
         }
 
-        double result = 0.0;
-        int len = s.Length;
+        double entropy = 0;
         foreach (var item in symbolAppearances)
         {
-            var frequency = (double)item.Value / len;
-            result -= frequency * (Math.Log(frequency) / Math.Log(2));
+            var P = (double)item.Value / str.Length;
+            entropy -= P * Math.Log2(P);
         }
 
-        return result;
+        return Math.Round(entropy, 3);
     }
 }
