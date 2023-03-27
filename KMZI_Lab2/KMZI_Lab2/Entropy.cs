@@ -1,7 +1,6 @@
 ﻿namespace KMZI_Lab2;
 public class Entropy
 {
-
     public static double GetShannonEntropy(string str)
     {
         var symbolAppearances = new Dictionary<char, int>();
@@ -21,5 +20,14 @@ public class Entropy
         }
 
         return Math.Round(entropy, 3);
+    }
+
+
+    public static double GetEffectiveEntropy(double p)
+    {
+        var q = 1 - p;
+        if (p == 0 || q == 0)
+            return 1;
+        return 1 - (-p * Math.Log2(p) - q * Math.Log2(q));
     }
 }
