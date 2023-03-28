@@ -1,47 +1,33 @@
 ﻿using KMZI_Lab2;
 
-const string pathToFolder = "../../../Alphabets";
-const string myName = "ValdaitsevAlexanderDenisovich";
-var symbolsQty = myName.Length;
-
-var pathKyrgyz = $"{pathToFolder}/kyrgyz.txt";
-var pathLithuanian = $"{pathToFolder}/lithuanian.txt";
-var pathBinary = $"{pathToFolder}/binary.txt";
-
-var textKyrgyz = "";
-var textLithuanian = "";
-var textBinary = "";
-
-using (var sr = new StreamReader(pathKyrgyz)) { textKyrgyz = sr.ReadToEnd().ToLower(); }
-using (var sr = new StreamReader(pathLithuanian)) { textLithuanian = sr.ReadToEnd().ToLower(); }
-using (var sr = new StreamReader(pathBinary)) { textBinary = sr.ReadToEnd().ToLower(); }
+var kyrgyz = Entropy.ReadFromFile("kyrgyz.txt");
+var lithuanian = Entropy.ReadFromFile("lithuanian.txt");
+var binary = Entropy.ReadFromFile("binary.txt");
+var myName = Entropy.ReadFromFile("myName.txt");
+var myNameASCII = Entropy.ReadFromFile("myNameASCII.txt");
 
 
-Console.WriteLine("\n============================================\n");
-Console.WriteLine($"Entropy of Language (kyrgyz):      {Entropy.GetShannonEntropy(textKyrgyz)}");
-Console.WriteLine($"Entropy of Language (lithuanian):  {Entropy.GetShannonEntropy(textLithuanian)}");
-Console.WriteLine($"Entropy of Language (binary):      {Entropy.GetShannonEntropy(textBinary)}");
-Console.WriteLine("\n============================================\n");
+Console.WriteLine("\n==========================================");
+Console.WriteLine($"Entropy of Language (kyrgyz):      {Entropy.GetShannonEntropy(kyrgyz)}");
+Console.WriteLine($"Entropy of Language (lithuanian):  {Entropy.GetShannonEntropy(lithuanian)}");
+Console.WriteLine($"Entropy of Language (binary):      {Entropy.GetShannonEntropy(binary)}");
 
-Console.WriteLine($"Information Amount (kyrgyz):       {Entropy.GetShannonEntropy(textKyrgyz) * symbolsQty}");
-Console.WriteLine($"Information Amount (lithuanian):   {Math.Round(Entropy.GetShannonEntropy(textLithuanian) * symbolsQty, 3)}");
-Console.WriteLine($"Information Amount (ASCII):        {Entropy.GetShannonEntropy(textBinary) * symbolsQty * 8}");
-Console.WriteLine("\n============================================\n");
+Console.WriteLine("\n================  P = 0  =================");
+Console.WriteLine($"Information Amount (kyrgyz):       {Entropy.GetInformationAmount(kyrgyz, myName)}");
+Console.WriteLine($"Information Amount (lithuanian):   {Entropy.GetInformationAmount(lithuanian, myName)}");
+Console.WriteLine($"Information Amount (ASCII):        {Entropy.GetInformationAmount(myNameASCII, myNameASCII)}");
 
-Console.WriteLine("\t\t--- P = 0.1 ---");
-Console.WriteLine($"Information Amount (kyrgyz):       {Math.Round(Entropy.GetShannonEntropy(textKyrgyz) * symbolsQty * Entropy.GetEffectiveEntropy(0.1), 3)}");
-Console.WriteLine($"Information Amount (lithuanian):   {Math.Round(Entropy.GetShannonEntropy(textLithuanian) * symbolsQty * Entropy.GetEffectiveEntropy(0.1), 3)}");
-Console.WriteLine($"Information Amount (binary):       {Math.Round(Entropy.GetShannonEntropy(textBinary) * symbolsQty * Entropy.GetEffectiveEntropy(0.1), 3)}");
-Console.WriteLine("\n============================================\n");
+Console.WriteLine("\n===============  P = 0.1  ================");
+Console.WriteLine($"Information Amount (kyrgyz):       {Entropy.GetInformationAmount(kyrgyz, myName, 0.1)}");
+Console.WriteLine($"Information Amount (lithuanian):   {Entropy.GetInformationAmount(lithuanian, myName, 0.1)}");
+Console.WriteLine($"Information Amount (ASCII):        {Entropy.GetInformationAmount(myNameASCII, myNameASCII, 0.1)}");
 
-Console.WriteLine("\t\t--- P = 0.5 ---");
-Console.WriteLine($"Information Amount (kyrgyz):       {Math.Round(Entropy.GetShannonEntropy(textKyrgyz) * symbolsQty * Entropy.GetEffectiveEntropy(0.5), 3)}");
-Console.WriteLine($"Information Amount (lithuanian):   {Math.Round(Entropy.GetShannonEntropy(textLithuanian) * symbolsQty * Entropy.GetEffectiveEntropy(0.5), 3)}");
-Console.WriteLine($"Information Amount (binary):       {Math.Round(Entropy.GetShannonEntropy(textBinary) * symbolsQty * Entropy.GetEffectiveEntropy(0.5), 3)}");
-Console.WriteLine("\n============================================\n");
+Console.WriteLine("\n===============  P = 0.5  ================");
+Console.WriteLine($"Information Amount (kyrgyz):       {Entropy.GetInformationAmount(kyrgyz, myName, 0.5)}");
+Console.WriteLine($"Information Amount (lithuanian):   {Entropy.GetInformationAmount(lithuanian, myName, 0.5)}");
+Console.WriteLine($"Information Amount (ASCII):        {Entropy.GetInformationAmount(myNameASCII, myNameASCII, 0.5)}");
 
-Console.WriteLine("\t\t --- P = 1 ---");
-Console.WriteLine($"Information Amount (kyrgyz):       {Math.Round(Entropy.GetShannonEntropy(textKyrgyz) * symbolsQty * Entropy.GetEffectiveEntropy(1), 3)}");
-Console.WriteLine($"Information Amount (lithuanian):   {Math.Round(Entropy.GetShannonEntropy(textLithuanian) * symbolsQty * Entropy.GetEffectiveEntropy(1), 3)}");
-Console.WriteLine($"Information Amount (binary):       {Math.Round(Entropy.GetShannonEntropy(textBinary) * symbolsQty * Entropy.GetEffectiveEntropy(1), 3)}");
-Console.WriteLine("\n============================================\n");
+Console.WriteLine("\n================  P = 1  =================");
+Console.WriteLine($"Information Amount (kyrgyz):       {Entropy.GetInformationAmount(kyrgyz, myName, 1)}");
+Console.WriteLine($"Information Amount (lithuanian):   {Entropy.GetInformationAmount(lithuanian, myName, 1)}");
+Console.WriteLine($"Information Amount (ASCII):        {Entropy.GetInformationAmount(myNameASCII, myNameASCII, 1)}");
