@@ -1,22 +1,22 @@
-﻿using System.Text.RegularExpressions;
-
-namespace KMZI_Lab4;
+﻿namespace KMZI_Lab4;
 public class Cypher
 {
     const string pathToFolder = "../../../Texts/";
     const string fileNameOpen = "open_text.txt";
-    const string fileNameEncrypt = "encrypt_text.txt";
+    const string fileNameEncrypt = "encrypt_monoalphabet.txt";
 
     const int k = 7;
     const string alphabet = "aäbcdefghijklmnoöpqrsßtuüvwxyz";
     const string alphabetExtended = "aäbcdefghijklmnoöpqrsßtuüvwxyz .,\"!?";
 
+    const int rows = 6;
+    const int columns = 6;
 
 
-    // Зашифрование с помощью моноалфавитного шифра подстановки
-    public static char[] EncryptMonoAlphabet()
+    // Зашифровать с помощью моноалфавитного шифра подстановки
+    public static char[] EncryptMonoAlphabet(string fileName = fileNameOpen)
     {
-        var str = ReadFromFile(fileNameOpen);
+        var str = ReadFromFile(fileName);
         var N = alphabet.Length;
         var length = str.Length;
 
@@ -31,10 +31,10 @@ public class Cypher
     }
 
 
-    // Расшифрование с помощью моноалфавитного шифра подстановки
-    public static char[] DecryptMonoAlphabet()
+    // Расшифровать с помощью моноалфавитного шифра подстановки
+    public static char[] DecryptMonoAlphabet(string fileName = fileNameEncrypt)
     {
-        var str = ReadFromFile(fileNameEncrypt);
+        var str = ReadFromFile(fileName);
         var N = alphabet.Length;
         var length = str.Length;
 
@@ -42,7 +42,7 @@ public class Cypher
             for (var j = 0; j < N; ++j)
                 if (str[i] == alphabet[j])
                 {
-                    var index = ((j - k) % N) < 0 ? ((j - k) % N) + k : ((j - k) % N);
+                    var index = (j - k + N) % N;
                     str[i] = alphabet[index];
                     break;
                 }
@@ -50,27 +50,21 @@ public class Cypher
     }
 
 
-    // Зашифрование таблицей Трисемуса
-    public static char[,] EncryptTrithemius(string keyword)
+    // Заполнить таблицу Трисемуса
+    public static char[,] FillTrithemiusTable(string keyword)
     {
-        var rows = 6;
-        var columns = 6;
+        var table = new char[rows, columns];
         var index = 0;
         
-        keyword = RemoveDuplicatedSymbols(keyword);
-        var table = new char[rows, columns];
-        
-        // заполняем ключевым словом
         foreach (var c in keyword.Distinct())
         {
             table[index / columns, index % columns] = c;
             index++;
         }
 
-        // заполняем оставшуюся часть таблицы
         foreach (var c in alphabetExtended)
         {
-            if (index >= rows * columns)    // достигли конца таблицы
+            if (index >= rows * columns)
                 break; 
             if (!keyword.Contains(c))
             {
@@ -78,10 +72,57 @@ public class Cypher
                 index++;
             }
         }
+
         return table;
     }
 
 
+    // Зашифровать по таблице Трисемуса
+    public static char[] EncryptTrithemius(string keyword, string fileName = fileNameOpen)
+    {
+        bool keepCycle;
+        var text = ReadFromFile(fileName);
+        var table = FillTrithemiusTable(keyword);
+
+        for (var i = 0; i < text.Length; ++i)
+        {
+            keepCycle = true;
+            for (var row = 0; row < rows && keepCycle; ++row)
+                for (var column = 0; column < columns && keepCycle; ++column)
+                    if (text[i] == table[row, column])
+                    {
+                        text[i] = (row != rows - 1) ? table[row + 1, column] : table[0, column];
+                        keepCycle = false;
+                        break;
+                    }
+        }
+
+        return text;
+    }
+
+
+    // Расшифровать по таблице Трисемуса
+    public static char[] DecryptTrithemius(string keyword, string fileName = fileNameOpen)
+    {
+        bool keepCycle;
+        var text = EncryptTrithemius(keyword, fileName);
+        var table = FillTrithemiusTable(keyword);
+
+        for (var i = 0; i < text.Length; ++i)
+        {
+            keepCycle = true;
+            for (var row = 0; row < rows && keepCycle; ++row)
+                for (var column = 0; column < columns && keepCycle; ++column)
+                    if (text[i] == table[row, column])
+                    {
+                        text[i] = (row == 0) ? table[rows - 1, column] : table[row - 1, column];
+                        keepCycle = false;
+                        break;
+                    }
+        }
+
+        return text;
+    }
 
 
     // Кол-во появлений символов в тексте
@@ -125,22 +166,5 @@ public class Cypher
             Console.WriteLine(ex.Message);
             return false;
         }
-    }
-
-
-    // Удалить из строки повторяющиеся символы
-    private static string RemoveDuplicatedSymbols(string str)
-    {
-        var i = 0;
-        while (true)
-        {
-            var tmp = str[i].ToString();
-            str = str.Replace(tmp, "");
-            str = str.Insert(i, tmp);
-            i++;
-            if (str.Length - 1 < i)
-                break;
-        }
-        return str;
     }
 }

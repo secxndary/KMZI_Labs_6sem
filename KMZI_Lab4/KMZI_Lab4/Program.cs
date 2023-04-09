@@ -1,7 +1,12 @@
 ﻿using KMZI_Lab4;
-var fileNameDecrypt = "decrypt_text.txt";
+var fileNameEncryptMonoalphabet = "encrypt_monoalphabet.txt";
+var fileNameDecryptMonoalphabet = "decrypt_monoalphabet.txt";
+var fileNameEncryptTrithemius = "encrypt_trithemius.txt";
+var fileNameDecryptTrithemius = "decrypt_trithemius.txt";
 
 
-Console.WriteLine($"Text Encryption:\t{Cypher.WriteToFile(Cypher.EncryptMonoAlphabet())}");
-Console.WriteLine($"Text Decryption:\t{Cypher.WriteToFile(Cypher.DecryptMonoAlphabet(), fileNameDecrypt)}");
-Console.Write(Cypher.EncryptTrithemius("baobabqweraaaqqqq"));
+Console.WriteLine($"Encryption Monoalphabet:\t{Cypher.WriteToFile(Cypher.EncryptMonoAlphabet(), fileNameEncryptMonoalphabet)}");
+Console.WriteLine($"Decryption Monoalphabet:\t{Cypher.WriteToFile(Cypher.DecryptMonoAlphabet(), fileNameDecryptMonoalphabet)}\n");
+
+Console.WriteLine($"Encryption Trithemius table:\t{Cypher.WriteToFile(Cypher.EncryptTrithemius("qwerty"), fileNameEncryptTrithemius)}");
+Console.WriteLine($"Encryption Trithemius table:\t{Cypher.WriteToFile(Cypher.DecryptTrithemius("qwerty"), fileNameDecryptTrithemius)}");
