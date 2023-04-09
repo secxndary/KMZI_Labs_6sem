@@ -5,8 +5,10 @@ var fileNameEncryptTrithemius = "encrypt_trithemius.txt";
 var fileNameDecryptTrithemius = "decrypt_trithemius.txt";
 
 
-Console.WriteLine($"Encryption Monoalphabet:\t{Cypher.WriteToFile(Cypher.EncryptMonoAlphabet(), fileNameEncryptMonoalphabet)}");
-Console.WriteLine($"Decryption Monoalphabet:\t{Cypher.WriteToFile(Cypher.DecryptMonoAlphabet(), fileNameDecryptMonoalphabet)}\n");
+Cypher.WriteToFile(Cypher.EncryptMonoAlphabet(), fileNameEncryptMonoalphabet);
+Cypher.WriteToFile(Cypher.DecryptMonoAlphabet(), fileNameDecryptMonoalphabet);
 
-Console.WriteLine($"Encryption Trithemius table:\t{Cypher.WriteToFile(Cypher.EncryptTrithemius("qwerty"), fileNameEncryptTrithemius)}");
-Console.WriteLine($"Encryption Trithemius table:\t{Cypher.WriteToFile(Cypher.DecryptTrithemius("qwerty"), fileNameDecryptTrithemius)}");
+Console.WriteLine("----------------------------------------------");
+
+Cypher.WriteToFile(Cypher.EncryptTrithemius("enigma"), fileNameEncryptTrithemius);
+Cypher.WriteToFile(Cypher.DecryptTrithemius("enigma"), fileNameDecryptTrithemius);

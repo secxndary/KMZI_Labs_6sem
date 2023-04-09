@@ -1,9 +1,12 @@
-﻿namespace KMZI_Lab4;
+﻿using System.Diagnostics;
+
+namespace KMZI_Lab4;
 public class Cypher
 {
     const string pathToFolder = "../../../Texts/";
     const string fileNameOpen = "open_text.txt";
     const string fileNameEncrypt = "encrypt_monoalphabet.txt";
+    const string fileNameEncryptTrithemius = "encrypt_trithemius.txt";
 
     const int k = 7;
     const string alphabet = "aäbcdefghijklmnoöpqrsßtuüvwxyz";
@@ -16,6 +19,9 @@ public class Cypher
     // Зашифровать с помощью моноалфавитного шифра подстановки
     public static char[] EncryptMonoAlphabet(string fileName = fileNameOpen)
     {
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
+
         var str = ReadFromFile(fileName);
         var N = alphabet.Length;
         var length = str.Length;
@@ -27,6 +33,9 @@ public class Cypher
                     str[i] = alphabet[(j + k) % N];
                     break;
                 }
+
+        stopWatch.Stop();
+        Console.WriteLine($"Encrypt Monoalphabet:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
         return str;
     }
 
@@ -34,6 +43,9 @@ public class Cypher
     // Расшифровать с помощью моноалфавитного шифра подстановки
     public static char[] DecryptMonoAlphabet(string fileName = fileNameEncrypt)
     {
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
+
         var str = ReadFromFile(fileName);
         var N = alphabet.Length;
         var length = str.Length;
@@ -46,6 +58,9 @@ public class Cypher
                     str[i] = alphabet[index];
                     break;
                 }
+
+        stopWatch.Stop();
+        Console.WriteLine($"Decrypt Monoalphabet:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
         return str;
     }
 
@@ -80,6 +95,9 @@ public class Cypher
     // Зашифровать по таблице Трисемуса
     public static char[] EncryptTrithemius(string keyword, string fileName = fileNameOpen)
     {
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
+
         bool keepCycle;
         var text = ReadFromFile(fileName);
         var table = FillTrithemiusTable(keyword);
@@ -97,15 +115,20 @@ public class Cypher
                     }
         }
 
+        stopWatch.Stop();
+        Console.WriteLine($"Encrypt Trithemius:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
         return text;
     }
 
 
     // Расшифровать по таблице Трисемуса
-    public static char[] DecryptTrithemius(string keyword, string fileName = fileNameOpen)
+    public static char[] DecryptTrithemius(string keyword, string fileName = fileNameEncryptTrithemius)
     {
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
+
         bool keepCycle;
-        var text = EncryptTrithemius(keyword, fileName);
+        var text = ReadFromFile(fileName);
         var table = FillTrithemiusTable(keyword);
 
         for (var i = 0; i < text.Length; ++i)
@@ -121,6 +144,8 @@ public class Cypher
                     }
         }
 
+        stopWatch.Stop();
+        Console.WriteLine($"Decrypt Trithemius:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
         return text;
     }
 
