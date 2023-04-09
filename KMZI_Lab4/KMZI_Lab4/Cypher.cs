@@ -1,4 +1,6 @@
-﻿namespace KMZI_Lab4;
+﻿using System.Text.RegularExpressions;
+
+namespace KMZI_Lab4;
 public class Cypher
 {
     const string pathToFolder = "../../../Texts/";
@@ -7,6 +9,7 @@ public class Cypher
 
     const int k = 7;
     const string alphabet = "aäbcdefghijklmnoöpqrsßtuüvwxyz";
+    const string alphabetExtended = "aäbcdefghijklmnoöpqrsßtuüvwxyz .,\"!?";
 
 
 
@@ -44,6 +47,38 @@ public class Cypher
                     break;
                 }
         return str;
+    }
+
+
+    // Зашифрование таблицей Трисемуса
+    public static char[,] EncryptTrithemius(string keyword)
+    {
+        var rows = 6;
+        var columns = 6;
+        var index = 0;
+        
+        keyword = RemoveDuplicatedSymbols(keyword);
+        var table = new char[rows, columns];
+        
+        // заполняем ключевым словом
+        foreach (var c in keyword.Distinct())
+        {
+            table[index / columns, index % columns] = c;
+            index++;
+        }
+
+        // заполняем оставшуюся часть таблицы
+        foreach (var c in alphabetExtended)
+        {
+            if (index >= rows * columns)    // достигли конца таблицы
+                break; 
+            if (!keyword.Contains(c))
+            {
+                table[index / columns, index % columns] = c;
+                index++;
+            }
+        }
+        return table;
     }
 
 
@@ -90,5 +125,22 @@ public class Cypher
             Console.WriteLine(ex.Message);
             return false;
         }
+    }
+
+
+    // Удалить из строки повторяющиеся символы
+    private static string RemoveDuplicatedSymbols(string str)
+    {
+        var i = 0;
+        while (true)
+        {
+            var tmp = str[i].ToString();
+            str = str.Replace(tmp, "");
+            str = str.Insert(i, tmp);
+            i++;
+            if (str.Length - 1 < i)
+                break;
+        }
+        return str;
     }
 }
