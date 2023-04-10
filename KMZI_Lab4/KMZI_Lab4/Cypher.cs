@@ -14,7 +14,7 @@ public class Cypher
 
     const int rows = 6;
     const int columns = 6;
-
+        
 
     // Зашифровать с помощью моноалфавитного шифра подстановки
     public static char[] EncryptMonoAlphabet(string fileName = fileNameOpen)
@@ -30,7 +30,8 @@ public class Cypher
             for (var j = 0; j < N; ++j)
                 if (str[i] == alphabet[j])
                 {
-                    str[i] = alphabet[(j + k) % N];
+                    var index = (j + k) % N;
+                    str[i] = alphabet[index];
                     break;
                 }
 
