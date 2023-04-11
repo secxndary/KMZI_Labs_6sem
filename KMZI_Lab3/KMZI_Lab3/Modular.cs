@@ -63,13 +63,69 @@ public class Modular
     }
 
 
+    // Представить число в виде канонического разложения на множители
+    public static List<ulong> GetCanonicalForm(ulong n)
+    {
+        var primes = new List<ulong>();
+        var divisor = 2u;
+
+        while (n > 1)
+        {
+            while (n % divisor == 0)
+            {
+                primes.Add(divisor);
+                n /= divisor;
+            }
+
+            divisor++;
+            if (divisor * divisor > n)
+            {
+                if (n > 1)
+                    primes.Add(n);
+                break;
+            }
+        }
+        return primes;
+    }
+
+
+    // Простое ли число, состоящее из конкатенации цифр m || n
+    public static bool IsPrimeByNumbersConcat(ulong m, ulong n) => IsPrime(ConcatNumbers(m, n));
+
+
     // Получить количество простых чисел
     public static int GetPrimesCount(ulong n) => GetPrimes(n).Count;
-    
     public static int GetPrimesCount(ulong m, ulong n) => GetPrimes(m, n).Count;
 
 
     // Получить примерное количество простых чисел [n / ln(n)]
-    // Для общего развития: это формула из Теоремы о распределении простых чисел
     public static double GetApproximatePrimesCount(ulong n) => Math.Round(n / Math.Log(n), 1);
+
+
+    // Является ли число простым
+    private static bool IsPrime(ulong n)
+    {
+        if (n < 2)
+            return false;
+
+        for (var i = 2ul; i * i <= n; ++i)
+            if (n % i == 0)
+                return false;
+
+        return true;
+    }
+
+
+    // Конкатенация двух чисел в одно
+    private static ulong ConcatNumbers(params ulong[] numbers)
+    {
+        var sb = new System.Text.StringBuilder();
+        var result = 0ul;
+
+        foreach (var number in numbers)
+            sb.Append(number.ToString());
+
+        ulong.TryParse(sb.ToString(), out result);
+        return result;
+    }
 }
