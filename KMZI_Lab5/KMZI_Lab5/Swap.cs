@@ -8,12 +8,11 @@ public class Swap
 
 
     // Зашифровать маршрутным перестановочным шифром
-    public static char[] EncryptRouteSwap(char[,] data)
+    public static char[] EncryptRouteSwap(char[] openText, int rows, int cols)
     {
-        var index = 0;
-        var rows = data.GetLength(0);
-        var cols = data.GetLength(1);
+        var data = ConvertToTwoDimentionalArray(openText, rows, cols);
         var result = new char[rows * cols];
+        var index = 0;
 
         for (var i = 0; i < cols; ++i)
         {
@@ -52,16 +51,16 @@ public class Swap
 
 
     // Получить двумерный массив с исходным текстом
-    public static char[,] GetOpenText() => ConvertToTwoDimentionalArray(ReadFromFile(fileNameOpen));
+    public static char[] GetOpenText() => ReadFromFile(fileNameOpen);
 
 
 
     // Конвертировать одномерный массив char[] в двумерный массив char[,]
-    public static char[,] ConvertToTwoDimentionalArray(char[] array)
+    public static char[,] ConvertToTwoDimentionalArray(char[] array, int rows, int cols)
     {
         var length = array.Length;
-        var rows = (int)Math.Ceiling(Math.Sqrt(length));
-        var cols = (int)Math.Ceiling((double)length / rows);
+        //var rows = (int)Math.Ceiling(Math.Sqrt(length));
+        //var cols = (int)Math.Ceiling((double)length / rows);
         var result = new char[rows, cols];
         var index = 0;
 
@@ -89,7 +88,7 @@ public class Swap
         var text = "";
         using (var sr = new StreamReader(filePath))
             text = sr.ReadToEnd();
-        return text.ToCharArray();
+        return text.ToLower().ToCharArray();
     }
 
 
