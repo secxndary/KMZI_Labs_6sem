@@ -6,6 +6,7 @@ public class Swap
     const string fileNameOpen = "open_text.txt";
 
 
+
     // Зашифровать маршрутным перестановочным шифром
     public static char[] EncryptRouteSwap(char[,] data)
     {
@@ -14,7 +15,7 @@ public class Swap
         var cols = data.GetLength(1);
         var result = new char[rows * cols];
 
-        for (var i = 0; i < cols; i++)
+        for (var i = 0; i < cols; ++i)
         {
             if (i % 2 == 0)
                 for (var j = 0; j < rows; ++j)
@@ -28,12 +29,31 @@ public class Swap
     }
 
 
-    // Расшифровать маршрутным перестановочным шифром
-    public static char[] DecryptRouteSwap(char[,] data)
-    {
 
-        return new char[1];
+    // Расшифровать маршрутным перестановочным шифром
+    public static char[,] DecryptRouteSwap(char[] encryptedData, int rows, int cols)
+    {
+        var index = 0;
+        var result = new char[rows, cols];
+
+        for (var i = 0; i < cols; ++i)
+        {
+            if (i % 2 == 0)
+                for (var j = 0; j < rows; ++j)
+                    result[j, i] = encryptedData[index++];
+            else
+                for (var j = rows - 1; j >= 0; --j)
+                    result[j, i] = encryptedData[index++];
+        }
+
+        return result;
     }
+
+
+
+    // Получить двумерный массив с исходным текстом
+    public static char[,] GetOpenText() => ConvertToTwoDimentionalArray(ReadFromFile(fileNameOpen));
+
 
 
     // Конвертировать одномерный массив char[] в двумерный массив char[,]
@@ -56,18 +76,25 @@ public class Swap
     }
 
 
+
+    // Конвертировать двумерный массив char[,] в одномерный массив char[]
+    public static char[] ConvertToOneDimentionalArray(char[,] array) => array.Cast<char>().ToArray();
+
+
+
     // Чтение текста из файла
-    public static char[] ReadFromFile(string fileName = fileNameOpen)
+    public static char[] ReadFromFile(string fileName)
     {
         var filePath = Path.Combine(pathToFolder, fileName);
         var text = "";
         using (var sr = new StreamReader(filePath))
-            text = sr.ReadToEnd().ToLower();
+            text = sr.ReadToEnd();
         return text.ToCharArray();
     }
 
 
-    // Запись массива символов в файл
+
+    // Запись одномерного массива символов char[] в файл
     public static bool WriteToFile(char[] text, string fileName)
     {
         var filePath = Path.Combine(pathToFolder, fileName);
@@ -83,4 +110,9 @@ public class Swap
             return false;
         }
     }
+
+
+
+    // Запись двумерного массива символов char[,] в файл
+    public static bool WriteToFile(char[,] text, string fileName) => WriteToFile(ConvertToOneDimentionalArray(text), fileName);
 }
