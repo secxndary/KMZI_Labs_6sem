@@ -5,7 +5,6 @@ namespace KMZI_Lab5;
 
 public class Swap
 {
-    const string pathToFolder = "../../../Texts/";
     const string fileNameOpen = "open_text.txt";
     const string fileNameEncryptRoute = "encrypt_route.txt";
     const string alphabet = "aäbcdefghijklmnoöpqrsßtuüvwxyz";
@@ -17,8 +16,8 @@ public class Swap
         var stopWatch = new Stopwatch();
         stopWatch.Start();
 
-        var openText = ReadFromFile(fileName);
-        var data = ConvertToTwoDimentionalArray(openText, rows, cols);
+        var openText = SwapHelper.ReadFromFile(fileName);
+        var data = SwapHelper.ConvertToTwoDimentionalArray(openText, rows, cols);
         var result = new char[rows * cols];
         var index = 0;
 
@@ -45,7 +44,7 @@ public class Swap
         var stopWatch = new Stopwatch();
         stopWatch.Start();
 
-        var encryptedData = ReadFromFile(fileName);
+        var encryptedData = SwapHelper.ReadFromFile(fileName);
         var result = new char[rows, cols];
         var index = 0;
 
@@ -73,24 +72,20 @@ public class Swap
         var stopWatch = new Stopwatch();
         stopWatch.Start();
 
-        var openText = ReadFromFile(fileName);
-
+        var openText = SwapHelper.ReadFromFile(fileName);
         (var indexesRows, var indexesColumns) = GetRowsAndColsIndexesArrays(keyColumns, keyRows, openText);
-
         var rows = indexesRows.Length;
         var cols = indexesColumns.Length;
+        var table = SwapHelper.ConvertToTwoDimentionalArray(openText, rows, cols);
 
-
-        var table = ConvertToTwoDimentionalArray(openText, rows, cols);
+        /// перестановка по строкам
         var tableWithSwappedRows = table.Clone() as char[,];
-
         for (var i = 0; i < rows; i++)
             for (var j = 0; j < cols; j++)
                 tableWithSwappedRows[i, j] = table[indexesRows[i], j];
 
-
+        /// перестановка по столбцам
         var tableWithSwappedRowsAndColumns = tableWithSwappedRows.Clone() as char[,];
-        
         for (var j = 0; j < cols; j++)
             for (var i = 0; i < rows; i++)
                 tableWithSwappedRowsAndColumns[i, j] = tableWithSwappedRows[i, indexesColumns[j]];
@@ -109,19 +104,17 @@ public class Swap
         stopWatch.Start();
 
         (var indexesRows, var indexesColumns) = GetRowsAndColsIndexesArrays(keyColumns, keyRows, tableEncrypted);
-
         var rows = indexesRows.Length;
         var cols = indexesColumns.Length;
 
+        /// перестановка по строкам
         var tableWithSwappedRows = tableEncrypted.Clone() as char[,];
-        
         for (var i = 0; i < rows; i++)
             for (var j = 0; j < cols; j++)
                 tableWithSwappedRows[indexesRows[i], j] = tableEncrypted[i, j];
 
-
+        /// перестановка по столбцам
         var tableWithSwappedRowsAndColumns = tableWithSwappedRows.Clone() as char[,];
-
         for (var j = 0; j < cols; j++)
             for (var i = 0; i < rows; i++)
                 tableWithSwappedRowsAndColumns[i, indexesColumns[j]] = tableWithSwappedRows[i, j];
@@ -160,7 +153,7 @@ public class Swap
 
 
 
-    // Перегрузка вышеописанного метода с последним стркоовым параметром (для зашифрования)
+    // Перегрузка вышеописанного метода для одномерного массива (для зашифрования)
     public static (int[], int[]) GetRowsAndColsIndexesArrays(string keyColumns, string keyRows, char[] openText)
     {
         var keyRowsInitial = keyRows.ToLowerInvariant();
@@ -202,79 +195,5 @@ public class Swap
                 }
 
         return arrayOfIndexes;
-    }
-
-
-    // Получить массив char[] с исходным текстом
-    public static char[] GetOpenText() => ReadFromFile(fileNameOpen);
-
-
-    // Чтение текста из файла
-    public static char[] ReadFromFile(string fileName)
-    {
-        var filePath = Path.Combine(pathToFolder, fileName);
-        var text = "";
-        using (var sr = new StreamReader(filePath))
-            text = sr.ReadToEnd();
-        return text.ToLower().ToCharArray();
-    }
-
-
-    // Запись одномерного массива символов char[] в файл
-    public static bool WriteToFile(char[] text, string fileName)
-    {
-        var filePath = Path.Combine(pathToFolder, fileName);
-        try
-        {
-            using (var sw = new StreamWriter(filePath))
-                sw.WriteLine(text);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            return false;
-        }
-    }
-
-
-    // Кол-во появлений символов в тексте
-    public static Dictionary<char, int> GetSymbolAppearances(char[] str)
-    {
-        var symbolAppearances = new Dictionary<char, int>();
-        foreach (char c in str)
-        {
-            if (!symbolAppearances.ContainsKey(c))
-                symbolAppearances.Add(c, 1);
-            else
-                symbolAppearances[c] += 1;
-        }
-        return symbolAppearances;
-    }
-
-
-    // Запись двумерного массива символов char[,] в файл
-    public static bool WriteToFile(char[,] text, string fileName) => WriteToFile(ConvertToOneDimentionalArray(text), fileName);
-
-
-    // Конвертировать двумерный массив char[,] в одномерный массив char[]
-    public static char[] ConvertToOneDimentionalArray(char[,] array) => array.Cast<char>().ToArray();
-
-
-    // Конвертировать одномерный массив char[] в двумерный массив char[,]
-    private static char[,] ConvertToTwoDimentionalArray(char[] array, int rows, int cols)
-    {
-        var length = array.Length;
-        var result = new char[rows, cols];
-        var index = 0;
-
-        for (var i = 0; i < rows; ++i)
-            for (var j = 0; j < cols && index < length; ++j)
-            {
-                result[i, j] = array[index];
-                index++;
-            }
-
-        return result;
     }
 }
