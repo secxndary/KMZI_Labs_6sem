@@ -70,54 +70,72 @@ public class Swap
     // Зашифровать множественной перестановкой
     public static char[,] EncryptMultiple(string keyColumns, string keyRows, string fileName = fileNameOpen)
     {
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
+
         var openText = ReadFromFile(fileName);
 
-        var keyRowsInitial = keyRows.ToLowerInvariant();
-        var keyColumnsInitial = keyColumns.ToLowerInvariant();
+        (var indexesRows, var indexesColumns) = GetRowsAndColsIndexesArrays(keyColumns, keyRows, openText);
 
-        var sbRows = new StringBuilder(keyRowsInitial);
-        var sbCols = new StringBuilder(keyColumnsInitial);
-
-
-        while (sbCols.Length * sbRows.Length < openText.Length)
-        {
-            sbRows.Append(keyRowsInitial);
-            sbCols.Append(keyColumnsInitial);
-        }
-
-
-        keyRows = sbRows.ToString();
-        keyColumns = sbCols.ToString();
-
-        var indexesRows = GetAlphabetIndexes(keyRows);
-        var indexesColumns = GetAlphabetIndexes(keyColumns);
-
-        var rows = keyRows.Length;
-        var cols = keyColumns.Length;
+        var rows = indexesRows.Length;
+        var cols = indexesColumns.Length;
 
 
         var table = ConvertToTwoDimentionalArray(openText, rows, cols);
         var tableWithSwappedRows = table.Clone() as char[,];
 
-        // Перестановка по строкам
         for (var i = 0; i < rows; i++)
-        {
             for (var j = 0; j < cols; j++)
-            {
                 tableWithSwappedRows[i, j] = table[indexesRows[i], j];
-            }
-        }
 
-        return tableWithSwappedRows;
+
+        var tableWithSwappedRowsAndColumns = tableWithSwappedRows.Clone() as char[,];
+        
+        for (var j = 0; j < cols; j++)
+            for (var i = 0; i < rows; i++)
+                tableWithSwappedRowsAndColumns[i, j] = tableWithSwappedRows[i, indexesColumns[j]];
+
+        stopWatch.Stop();
+        Console.WriteLine($"Encrypt Multiple Swap:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
+        return tableWithSwappedRowsAndColumns;
     }
-
-
-
 
 
 
     // Расшифровать множественной перестановкой
     public static char[,] DecryptMultiple(string keyColumns, string keyRows, char[,] tableEncrypted)
+    {
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
+
+        (var indexesRows, var indexesColumns) = GetRowsAndColsIndexesArrays(keyColumns, keyRows, tableEncrypted);
+
+        var rows = indexesRows.Length;
+        var cols = indexesColumns.Length;
+
+        var tableWithSwappedRows = tableEncrypted.Clone() as char[,];
+        
+        for (var i = 0; i < rows; i++)
+            for (var j = 0; j < cols; j++)
+                tableWithSwappedRows[indexesRows[i], j] = tableEncrypted[i, j];
+
+
+        var tableWithSwappedRowsAndColumns = tableWithSwappedRows.Clone() as char[,];
+
+        for (var j = 0; j < cols; j++)
+            for (var i = 0; i < rows; i++)
+                tableWithSwappedRowsAndColumns[i, indexesColumns[j]] = tableWithSwappedRows[i, j];
+        
+        stopWatch.Stop();
+        Console.WriteLine($"Decrypt Multiple Swap:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
+        return tableWithSwappedRowsAndColumns;
+    }
+
+
+
+
+    // Получить кортеж с массивами индексов символов ключа для итогового ключа множественной перестановки
+    public static (int[], int[]) GetRowsAndColsIndexesArrays(string keyColumns, string keyRows, char[,] tableEncrypted)
     {
         var keyRowsInitial = keyRows.ToLowerInvariant();
         var keyColumnsInitial = keyColumns.ToLowerInvariant();
@@ -125,13 +143,11 @@ public class Swap
         var sbRows = new StringBuilder(keyRowsInitial);
         var sbCols = new StringBuilder(keyColumnsInitial);
 
-
         while (sbCols.Length * sbRows.Length < tableEncrypted.Length)
         {
             sbRows.Append(keyRowsInitial);
             sbCols.Append(keyColumnsInitial);
         }
-
 
         keyRows = sbRows.ToString();
         keyColumns = sbCols.ToString();
@@ -139,27 +155,34 @@ public class Swap
         var indexesRows = GetAlphabetIndexes(keyRows);
         var indexesColumns = GetAlphabetIndexes(keyColumns);
 
-        var rows = keyRows.Length;
-        var cols = keyColumns.Length;
-
-
-        var tableWithSwappedRows = tableEncrypted.Clone() as char[,];
-
-        // Перестановка по строкам
-        for (var i = 0; i < rows; i++)
-        {
-            for (var j = 0; j < cols; j++)
-            {
-                tableWithSwappedRows[indexesRows[i], j] = tableEncrypted[i, j];
-            }
-        }
-
-        return tableWithSwappedRows;
+        return (indexesRows, indexesColumns);
     }
 
 
 
+    // Перегрузка вышеописанного метода с последним стркоовым параметром (для зашифрования)
+    public static (int[], int[]) GetRowsAndColsIndexesArrays(string keyColumns, string keyRows, char[] openText)
+    {
+        var keyRowsInitial = keyRows.ToLowerInvariant();
+        var keyColumnsInitial = keyColumns.ToLowerInvariant();
 
+        var sbRows = new StringBuilder(keyRowsInitial);
+        var sbCols = new StringBuilder(keyColumnsInitial);
+
+        while (sbCols.Length * sbRows.Length < openText.Length)
+        {
+            sbRows.Append(keyRowsInitial);
+            sbCols.Append(keyColumnsInitial);
+        }
+
+        keyRows = sbRows.ToString();
+        keyColumns = sbCols.ToString();
+
+        var indexesRows = GetAlphabetIndexes(keyRows);
+        var indexesColumns = GetAlphabetIndexes(keyColumns);
+
+        return (indexesRows, indexesColumns);
+    }
 
 
 
@@ -235,7 +258,7 @@ public class Swap
 
 
     // Конвертировать двумерный массив char[,] в одномерный массив char[]
-    private static char[] ConvertToOneDimentionalArray(char[,] array) => array.Cast<char>().ToArray();
+    public static char[] ConvertToOneDimentionalArray(char[,] array) => array.Cast<char>().ToArray();
 
 
     // Конвертировать одномерный массив char[] в двумерный массив char[,]

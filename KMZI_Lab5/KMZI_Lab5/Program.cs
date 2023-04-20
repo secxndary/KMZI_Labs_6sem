@@ -10,9 +10,10 @@ var cols = 66;
 
 Swap.WriteToFile(Swap.EncryptRouteSwap(rows, cols), fileNameEncryptRoute);
 Swap.WriteToFile(Swap.DecryptRouteSwap(rows, cols), fileNameDecryptRoute);
-Console.WriteLine("----------------------------------------------");
 
+Console.WriteLine("----------------------------------------------");
 var encryptedTableMultiple = Swap.EncryptMultiple("Alexander", "Valdaitsev");
-Swap.WriteToFile(encryptedTableMultiple, fileNameEncryptMultiple);
 var decryptedTableMultiple = Swap.DecryptMultiple("Alexander", "Valdaitsev", encryptedTableMultiple);
+
+Swap.WriteToFile(encryptedTableMultiple, fileNameEncryptMultiple);
 Swap.WriteToFile(decryptedTableMultiple, fileNameDecryptMultiple);
