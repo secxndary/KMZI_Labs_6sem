@@ -1,5 +1,5 @@
-﻿using System.Diagnostics;
-using System.Text;
+﻿using System.Text;
+using System.Diagnostics;
 
 namespace KMZI_Lab5;
 
@@ -66,12 +66,111 @@ public class Swap
 
 
 
+
+    // Зашифровать множественной перестановкой
+    public static char[,] EncryptMultiple(string keyColumns, string keyRows, string fileName = fileNameOpen)
+    {
+        var openText = ReadFromFile(fileName);
+
+        var keyRowsInitial = keyRows.ToLowerInvariant();
+        var keyColumnsInitial = keyColumns.ToLowerInvariant();
+
+        var sbRows = new StringBuilder(keyRowsInitial);
+        var sbCols = new StringBuilder(keyColumnsInitial);
+
+
+        while (sbCols.Length * sbRows.Length < openText.Length)
+        {
+            sbRows.Append(keyRowsInitial);
+            sbCols.Append(keyColumnsInitial);
+        }
+
+
+        keyRows = sbRows.ToString();
+        keyColumns = sbCols.ToString();
+
+        var indexesRows = GetAlphabetIndexes(keyRows);
+        var indexesColumns = GetAlphabetIndexes(keyColumns);
+
+        var rows = keyRows.Length;
+        var cols = keyColumns.Length;
+
+
+        var table = ConvertToTwoDimentionalArray(openText, rows, cols);
+        var tableWithSwappedRows = table.Clone() as char[,];
+
+        // Перестановка по строкам
+        for (var i = 0; i < rows; i++)
+        {
+            for (var j = 0; j < cols; j++)
+            {
+                tableWithSwappedRows[i, j] = table[indexesRows[i], j];
+            }
+        }
+
+        return tableWithSwappedRows;
+    }
+
+
+
+
+
+
+    // Расшифровать множественной перестановкой
+    public static char[,] DecryptMultiple(string keyColumns, string keyRows, char[,] tableEncrypted)
+    {
+        var keyRowsInitial = keyRows.ToLowerInvariant();
+        var keyColumnsInitial = keyColumns.ToLowerInvariant();
+
+        var sbRows = new StringBuilder(keyRowsInitial);
+        var sbCols = new StringBuilder(keyColumnsInitial);
+
+
+        while (sbCols.Length * sbRows.Length < tableEncrypted.Length)
+        {
+            sbRows.Append(keyRowsInitial);
+            sbCols.Append(keyColumnsInitial);
+        }
+
+
+        keyRows = sbRows.ToString();
+        keyColumns = sbCols.ToString();
+
+        var indexesRows = GetAlphabetIndexes(keyRows);
+        var indexesColumns = GetAlphabetIndexes(keyColumns);
+
+        var rows = keyRows.Length;
+        var cols = keyColumns.Length;
+
+
+        var tableWithSwappedRows = tableEncrypted.Clone() as char[,];
+
+        // Перестановка по строкам
+        for (var i = 0; i < rows; i++)
+        {
+            for (var j = 0; j < cols; j++)
+            {
+                tableWithSwappedRows[indexesRows[i], j] = tableEncrypted[i, j];
+            }
+        }
+
+        return tableWithSwappedRows;
+    }
+
+
+
+
+
+
+
+    // Получить массив индексов символов
+    // ключа для множественной перестановки
     public static int[] GetAlphabetIndexes(string str)
     {
         var index = 0;
         var arrayOfIndexes = new int[str.Length];
 
-        for (var i = 0; i< alphabet.Length; ++i)
+        for (var i = 0; i < alphabet.Length; ++i)
             for (var j = 0; j < str.Length; ++j)
                 if (alphabet[i] == str[j])
                 {
@@ -83,118 +182,7 @@ public class Swap
     }
 
 
-
-
-    public static char[,] EncryptMultiple(string keyColumns, string keyRows, string fileName = fileNameOpen)
-    {
-        var openText = ReadFromFile(fileName);
-
-        var keyColumnsInitial = keyColumns.ToLowerInvariant();
-        var keyRowsInitial = keyRows.ToLowerInvariant();
-
-        var rows = keyRows.Length;
-        var cols = keyColumns.Length;
-
-        var stringBuilderRows = new StringBuilder(keyRowsInitial);
-        var stringBuilderColumns = new StringBuilder(keyColumnsInitial);
-
-        while (rows * cols < openText.Length)
-        {
-            stringBuilderColumns.Append(keyColumnsInitial);
-            stringBuilderRows.Append(keyRowsInitial);
-            cols += keyColumnsInitial.Length;
-            rows += keyRowsInitial.Length;
-        }
-
-        keyRows = stringBuilderRows.ToString();
-        keyColumns = stringBuilderColumns.ToString();
-
-        var indexesRows = GetAlphabetIndexes(keyRows);
-        var indexesColumns = GetAlphabetIndexes(keyColumns);
-
-        return new char[1, 1];
-    }
-
-
-
-
-
-
-    //// Зашифровать множественной перестановкой
-    //public static char[,] EncryptMultiple(string keyColumns, string keyRows, string fileName = fileNameOpen)
-    //{
-    //    var openText = ReadFromFile(fileName);
-    //    var keyColumnsInitial = keyColumns.ToLowerInvariant();
-    //    var keyRowsInitial = keyRows.ToLowerInvariant();
-
-    //    const string alphabet = "abcdefghijklmnopqrstuvwxyz";
-    //    int rows = keyRows.Length;
-    //    int cols = keyColumns.Length;
-
-    //    // Повторяем ключи, если необходимо
-    //    while (rows * cols < openText.Length)
-    //    {
-    //        keyColumns += keyColumnsInitial;
-    //        keyRows += keyRowsInitial;
-    //        cols += keyColumnsInitial.Length;
-    //        rows += keyRowsInitial.Length;
-    //    }
-
-    //    // Создаем таблицу для шифрования
-    //    char[,] table = new char[rows, cols];
-    //    int index = 0;
-    //    foreach (char c in keyColumns)
-    //    {
-    //        int column = alphabet.IndexOf(c);
-    //        for (int i = 0; i < rows; i++)
-    //        {
-    //            table[i, index] = openText[index];
-    //            index++;
-    //        }
-    //        if (index >= openText.Length)
-    //            break;
-    //    }
-
-    //    // Переставляем столбцы в соответствии с ключом для столбцов
-    //    char[] sortedColumns = keyColumns.OrderBy(c => c).ToArray();
-    //    char[,] sortedTable = new char[rows, cols];
-    //    for (int i = 0; i < cols; i++)
-    //    {
-    //        int sortedIndex = Array.IndexOf(sortedColumns, keyColumns[i]);
-    //        for (int j = 0; j < rows; j++)
-    //            sortedTable[j, sortedIndex] = table[j, i];
-    //    }
-
-    //    // Переставляем строки в соответствии с ключом для строк
-    //    char[] sortedRows = keyRows.OrderBy(c => c).ToArray();
-    //    char[,] resultTable = new char[rows, cols];
-    //    for (int i = 0; i < rows; i++)
-    //    {
-    //        int sortedIndex = Array.IndexOf(sortedRows, keyRows[i]);
-    //        for (int j = 0; j < cols; j++)
-    //            resultTable[sortedIndex, j] = sortedTable[i, j];
-    //    }
-
-    //    return resultTable;
-    //}
-
-
-
-
-
-
-
-    // Расшифровать множественной перестановкой
-    public static char[,] DecryptMultiple(string keyColumns, string keyRows)
-    {
-
-        return new char[1, 1];
-    }
-
-
-
-
-    // Получить двумерный массив с исходным текстом
+    // Получить массив char[] с исходным текстом
     public static char[] GetOpenText() => ReadFromFile(fileNameOpen);
 
 
