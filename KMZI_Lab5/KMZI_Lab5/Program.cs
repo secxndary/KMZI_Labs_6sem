@@ -1,17 +1,15 @@
 ﻿using KMZI_Lab5;
-string  fileNameEncryptRoute = "encrypt_route.txt",
-        fileNameDecryptRoute = "decrypt_route.txt",
-        fileNameEncryptMultiple = "encrypt_multiple.txt",
-        fileNameDecryptMultiple = "decrypt_multiple.txt";
+var fileNameOpen = "open_text.txt";
+var fileNameEncryptRoute = "encrypt_route.txt";
+var fileNameDecryptRoute = "decrypt_route.txt";
+var fileNameEncryptMultiple = "encrypt_multiple.txt";
+var fileNameDecryptMultiple = "decrypt_multiple.txt";
 var rows = 66;
 var cols = 66;
 
 
-var openText = Swap.GetOpenText();
-var encryptRoute = Swap.EncryptRouteSwap(openText, rows, cols);
-var decryptRoute = Swap.DecryptRouteSwap(encryptRoute, rows, cols);
+Swap.WriteToFile(Swap.EncryptRouteSwap(rows, cols), fileNameEncryptRoute);
+Swap.WriteToFile(Swap.DecryptRouteSwap(rows, cols), fileNameDecryptRoute);
+Console.WriteLine("----------------------------------------------");
 
-Console.WriteLine($"Encrypt Route Swap:\t{Swap.WriteToFile(encryptRoute, fileNameEncryptRoute)}");
-Console.WriteLine($"Decrypt Route Swap:\t{Swap.WriteToFile(decryptRoute, fileNameDecryptRoute)}");
-Console.WriteLine("-------------------------------");
-
+Swap.WriteToFile(Swap.EncryptMultiple("Alexander", "Valdaitsev"), fileNameEncryptMultiple);
