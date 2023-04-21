@@ -1,61 +1,91 @@
-﻿using System.Text;
-
-namespace KMZI_Lab6;
+﻿namespace KMZI_Lab6;
 
 public class Enigma
 {
+    // октрытые данные
     const string alphabetOpen =  "abcdefghijklmnopqrstuvwxyz";
-    Dictionary<char, char> alphabetReflector = FillTheRelector();
+    Dictionary<char, char> alphabetReflector;
     int length = alphabetOpen.Length;
     
+    // алфавиты для роторов
     string alphabetRightRotor  =  "ajdksiruxblhwtmcqgznpyfvoe";
     string alphabetMiddleRotor =  "bdfhjlcprtxvznyeiwgakmusqo";
     string alphabetLeftRotor   =  "esovpzjayquirhxlnftgkdcmwb";
 
-    int rotorPositionRight =  0;
-    int rotorPositionMiddle = 0;
-    int rotorPositionLeft  =  0;
+    // текущая позиция ротора (0-25)
+    int rotorRightCurrentPostition =  0;
+    int rotorMiddleCurrentPostition = 0;
+    int rotorLeftCurrentPostition  =  0;
 
-    int rotorOffsetRight =  4;
-    //int rotorOffsetMiddle = 1;
-    //int rotorOffsetLeft  =  1;
+    // общее количество смещений ротора за все время
+    // (т.е. на сколько шагов в общем сдвинулся)
+    int rotorRightTotalOffsets =  0;
+    int rotorMiddleTotalOffsets = 0;
+    int rotorLeftTotalOffsets  =  0;
+
+    // количество полных оборотов роторов
+    int rotorRightFullRotations =  0;
+    int rotorMiddleFullRotations = 0;
+    int rotorLeftFullRotations  =  0;
+
+    // шаги смещения роторов
+    int rotorRightStep =  4;
+    int rotorMiddleStep = 1;
+    int rotorLeftStep  =  1;
+
+    public Enigma() { alphabetReflector = FillTheRelector(); }
 
 
     public string Encrypt(char[] openText)
     {
-        var sb = new StringBuilder();
+        var sb = new System.Text.StringBuilder();
 
         foreach (char letter in openText)
         {
             if (alphabetOpen.Contains(letter))
             {
                 // 1. заменить на символ из правого ротора
-                var letterAfterRightRotor = EncryptWithRightRotor(letter, rotorPositionRight % length);
+                var letterAfterRightRotor = EncryptWithRightRotor(letter, rotorRightCurrentPostition);
 
                 // 2. заменить на символ из среднего ротора (првоерить поворот предыдущего, если был круг, то на 1 символ)
-                var letterAfterMiddleRotor = EncryptWithMiddleRotor(letterAfterRightRotor, rotorPositionMiddle % length);
+                var letterAfterMiddleRotor = EncryptWithMiddleRotor(letterAfterRightRotor, rotorMiddleCurrentPostition);
 
                 // 3. заменить на символ из левого ротора (првоерить поворот среднего, если был круг, то на 1 символ)
-                var letterAfterLeftRotor = EncryptWithLeftRotor(letterAfterMiddleRotor, rotorPositionLeft % length);
+                var letterAfterLeftRotor = EncryptWithLeftRotor(letterAfterMiddleRotor, rotorLeftCurrentPostition);
 
                 // 4. подставить символ из рефлектора
                 var letterAfterReflector = EncryptWithReflector(letterAfterLeftRotor);
 
                 // 5. заменить на символ левого ротора в обратном порядке
-                var letterAfterLeftRotorBackwards = EncryptWithLeftRotorBackwards(letterAfterReflector, rotorPositionLeft % length);
+                var letterAfterLeftRotorBackwards = EncryptWithLeftRotorBackwards(letterAfterReflector, rotorLeftCurrentPostition);
 
                 // 6. заменить на символ среднего ротора в обратном порядке
-                var letterAfterMiddleRotorBackwards = EncryptWithMiddleRotorBackwards(letterAfterLeftRotorBackwards, rotorPositionMiddle % length);
+                var letterAfterMiddleRotorBackwards = EncryptWithMiddleRotorBackwards(letterAfterLeftRotorBackwards, rotorMiddleCurrentPostition);
 
                 // 7. заменить на символ правого ротора в обратном порядке
-                var letterAfterRightRotorBackwards = EncryptWithRightRotorBackwards(letterAfterMiddleRotorBackwards, rotorPositionRight % length);
+                var letterAfterRightRotorBackwards = EncryptWithRightRotorBackwards(letterAfterMiddleRotorBackwards, rotorRightCurrentPostition);
 
-                // 8. повернуть ротор на 4 символа
-                rotorPositionRight += rotorOffsetRight;
+                // 8. сместить правый ротор
+                rotorRightTotalOffsets += rotorRightStep;
+                rotorRightCurrentPostition = rotorRightTotalOffsets % length;   // смещаем правый ротор
 
-                // 9. изменить позиции среднего и левого роторов      // TODO: refactor
-                rotorPositionMiddle = rotorPositionRight / length;
-                rotorPositionLeft = rotorPositionMiddle / length;
+                // 9. сместить средний и левый роторы
+                if (rotorRightTotalOffsets / length > 0)    // если правый ротор уже сделал 1 оборот или более
+                {
+                    rotorRightFullRotations = rotorRightTotalOffsets / length;   // кол-во полных оборотов правого ротора
+                    rotorMiddleTotalOffsets += rotorRightFullRotations * rotorMiddleStep;   // общее кол-во смещений среднего ротора
+                    rotorMiddleCurrentPostition = rotorMiddleTotalOffsets % length;     // текущая позиция среднего ротора
+                }
+                if (rotorMiddleTotalOffsets / length > 0)    // если средний ротор сделал 1 оборот или более
+                {
+                    rotorMiddleFullRotations = rotorMiddleTotalOffsets / length;    // кол-во полных оборотов среднего ротора
+                    rotorLeftTotalOffsets += rotorMiddleFullRotations * rotorLeftStep;  // общее кол-во смещений левого ротора
+                    rotorLeftCurrentPostition = rotorLeftTotalOffsets % length;     // текущая позиция левого ротора
+                }
+                if (rotorLeftTotalOffsets / length > 0)     // если левый ротор сделал 1 оборот или более
+                {
+                    rotorLeftFullRotations = rotorLeftTotalOffsets / length;    // кол-во полных оборотов левого ротора
+                }
 
                 // 10. записать символ в итоговую строку
                 sb.Append(letterAfterRightRotorBackwards);
