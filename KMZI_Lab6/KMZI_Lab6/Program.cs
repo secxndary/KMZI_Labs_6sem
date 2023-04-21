@@ -1,4 +1,4 @@
 ﻿using KMZI_Lab6;
-var message = "g".ToCharArray();
+var message = "hello world".ToCharArray();
 
-Enigma.Encrypt(message);
+Console.WriteLine($"{Enigma.Encrypt(message)}");

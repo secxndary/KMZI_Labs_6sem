@@ -1,69 +1,84 @@
-﻿namespace KMZI_Lab6;
+﻿using System.Text;
+
+namespace KMZI_Lab6;
 
 public class Enigma
 {
     const string alphabetOpen =  "abcdefghijklmnopqrstuvwxyz";
-    static int length = alphabetOpen.Length;
+    Dictionary<char, char> alphabetReflector = FillTheRelector();
+    int length = alphabetOpen.Length;
     
-    const string alphabetRigthRotor  =  "ajdksiruxblhwtmcqgznpyfvoe";
-    const string alphabetMiddleRotor =  "bdfhjlcprtxvznyeiwgakmusqo";
-    const string alphabetLeftRotor   =  "esovpzjayquirhxlnftgkdcmwb";
+    string alphabetRightRotor  =  "ajdksiruxblhwtmcqgznpyfvoe";
+    string alphabetMiddleRotor =  "bdfhjlcprtxvznyeiwgakmusqo";
+    string alphabetLeftRotor   =  "esovpzjayquirhxlnftgkdcmwb";
 
-    static int rotorPositionRigth =  0;
-    static int rotorPositionMiddle = 1;
-    static int rotorPositionLeft  =  1;
+    int rotorPositionRight =  0;
+    int rotorPositionMiddle = 0;
+    int rotorPositionLeft  =  0;
 
-    static int rotorOffsetRigth =  4;
-    static int rotorOffsetMiddle = 1;
-    static int rotorOffsetLeft  =  1;
+    int rotorOffsetRight =  4;
+    //int rotorOffsetMiddle = 1;
+    //int rotorOffsetLeft  =  1;
 
 
-    public static void Encrypt(char[] openText)
+    public string Encrypt(char[] openText)
     {
-        // берем букву текста
-        var letter = openText[0];
+        var sb = new StringBuilder();
 
-        // 1. заменить на символ из правого ротора
-        var letterAfterRigthRotor = EncryptWithRigthRotor(letter, rotorPositionRigth % length);
+        foreach (char letter in openText)
+        {
+            if (alphabetOpen.Contains(letter))
+            {
+                // 1. заменить на символ из правого ротора
+                var letterAfterRightRotor = EncryptWithRightRotor(letter, rotorPositionRight % length);
 
-        // 2. заменить на символ из среднего ротора (првоерить поворот предыдущего, если был круг, то на 1 символ)
-        var letterAfterMiddleRotor = EncryptWithMiddleRotor(letterAfterRigthRotor, rotorPositionMiddle % length);
+                // 2. заменить на символ из среднего ротора (првоерить поворот предыдущего, если был круг, то на 1 символ)
+                var letterAfterMiddleRotor = EncryptWithMiddleRotor(letterAfterRightRotor, rotorPositionMiddle % length);
 
-        // 3. заменить на символ из левого ротора (првоерить поворот среднего, если был круг, то на 1 символ)
-        var letterAfterLeftRotor = EncryptWithLeftRotor(letterAfterMiddleRotor, rotorPositionLeft % length);
+                // 3. заменить на символ из левого ротора (првоерить поворот среднего, если был круг, то на 1 символ)
+                var letterAfterLeftRotor = EncryptWithLeftRotor(letterAfterMiddleRotor, rotorPositionLeft % length);
 
+                // 4. подставить символ из рефлектора
+                var letterAfterReflector = EncryptWithReflector(letterAfterLeftRotor);
 
+                // 5. заменить на символ левого ротора в обратном порядке
+                var letterAfterLeftRotorBackwards = EncryptWithLeftRotorBackwards(letterAfterReflector, rotorPositionLeft % length);
 
-        // 4. подставить символ из рефлектора
-        // 5. заменить на символ левого ротора
-        // 6. заменить на символ среднего ротора
-        // 7. заменить на символ правого ротора
+                // 6. заменить на символ среднего ротора в обратном порядке
+                var letterAfterMiddleRotorBackwards = EncryptWithMiddleRotorBackwards(letterAfterLeftRotorBackwards, rotorPositionMiddle % length);
 
+                // 7. заменить на символ правого ротора в обратном порядке
+                var letterAfterRightRotorBackwards = EncryptWithRightRotorBackwards(letterAfterMiddleRotorBackwards, rotorPositionRight % length);
 
+                // 8. повернуть ротор на 4 символа
+                rotorPositionRight += rotorOffsetRight;
 
+                // 9. изменить позиции среднего и левого роторов      // TODO: refactor
+                rotorPositionMiddle = rotorPositionRight / length;
+                rotorPositionLeft = rotorPositionMiddle / length;
 
-        // 1.1. повернуть ротор на 4 символа
-        rotorPositionRigth += rotorOffsetRigth;
-
-        // 1.2. изменить позиции среднего и левого роторов      // TODO: refactor
-        rotorPositionMiddle = rotorPositionRigth / length;
-        rotorPositionLeft = rotorPositionMiddle / length;
-
+                // 10. записать символ в итоговую строку
+                sb.Append(letterAfterRightRotorBackwards);
+            }
+            else
+                sb.Append(letter);
+        }
+        return sb.ToString();   
     }
 
 
 
     // тут просто замена одного символа на другой с учетом сдвига ротора 
-    public static char EncryptWithRigthRotor(char letter, int offset)
+    private char EncryptWithRightRotor(char letter, int offset)
     {
         var index = alphabetOpen.IndexOf(letter);
         var indexEncrypted = (index + offset) % length;
-        var letterEncrypted = alphabetRigthRotor[indexEncrypted];
+        var letterEncrypted = alphabetRightRotor[indexEncrypted];
         return letterEncrypted;
     }
 
     // средний ротор
-    public static char EncryptWithMiddleRotor(char letter, int offset)
+    private char EncryptWithMiddleRotor(char letter, int offset)
     {
         var index = alphabetOpen.IndexOf(letter);
         var indexEncrypted = (index + offset) % length;
@@ -72,11 +87,59 @@ public class Enigma
     }
 
     // левый ротор
-    public static char EncryptWithLeftRotor(char letter, int offset)
+    private char EncryptWithLeftRotor(char letter, int offset)
     {
         var index = alphabetOpen.IndexOf(letter);
         var indexEncrypted = (index + offset) % length;
         var letterEncrypted = alphabetLeftRotor[indexEncrypted];
         return letterEncrypted;
     }
+
+    // зашифровать с рефлектором
+    private char EncryptWithReflector(char letter)
+    {
+        if (alphabetReflector.ContainsKey(letter))
+            return alphabetReflector[letter];
+        else if (alphabetReflector.ContainsValue(letter))
+            return alphabetReflector.FirstOrDefault(x => x.Value == letter).Key;
+        else
+            return letter;
+    }
+
+    // левый ротор в обратном порядке
+    private char EncryptWithLeftRotorBackwards(char letter, int offset)
+    {
+        var index = alphabetLeftRotor.IndexOf(letter);
+        var indexDecrypted = (index + offset) % length;
+        var letterDecrypted = alphabetOpen[indexDecrypted];
+        return letterDecrypted;
+    }
+
+    // средний ротор в обратном порядке
+    private char EncryptWithMiddleRotorBackwards(char letter, int offset)
+    {
+        var index = alphabetMiddleRotor.IndexOf(letter);
+        var indexDecrypted = (index + offset) % length;
+        var letterDecrypted = alphabetOpen[indexDecrypted];
+        return letterDecrypted;
+    }
+
+    // правый ротор в обратном порядке
+    private char EncryptWithRightRotorBackwards(char letter, int offset)
+    {
+        var index = alphabetRightRotor.IndexOf(letter);
+        var indexDecrypted = (index + offset) % length;
+        var letterDecrypted = alphabetOpen[indexDecrypted];
+        return letterDecrypted;
+    }
+
+
+
+    // заполнить рефлектор
+    private Dictionary<char, char> FillTheRelector() => new Dictionary<char, char> 
+    { 
+        { 'a', 'r' }, { 'b', 'd' }, { 'c', 'o' }, { 'e', 'j' }, { 'f', 'n' },
+        { 'g', 't' }, { 'h', 'k' }, { 'i', 'v' }, { 'l', 'm' }, { 'p', 'w' },
+        { 'q', 'z' }, { 's', 'x' }, { 'u', 'y' }
+    };
 }
