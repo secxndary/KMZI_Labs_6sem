@@ -1,10 +1,22 @@
 ﻿using KMZI_Lab6;
 
-var enigma = new Enigma();
-var enigma2 = new Enigma();
-var message = "hello world".ToCharArray();
-var message2 = "qfuod brsqq".ToCharArray();
+try
+{
+    var fileNameEncrypt = "encrypt_enigma.txt";
+    var fileNameDecrypt = "decrypt_enigma.txt";
 
-Console.WriteLine($"{enigma.Encrypt(message)}");    // qfuod brsqq - v0.1 (but norm)
-                                                    // qfuod brsga - gavno
-Console.WriteLine($"{enigma2.Encrypt(message2)}");
+    var enigmaEncrypt = new Enigma(0, 0, 0);
+    var enigmaDecrypt = new Enigma(0, 0, 0);
+    var openMessage = EnigmaHelper.GetOpenText();
+
+
+    var encryptedMessage = enigmaEncrypt.Encrypt(openMessage);
+    Console.WriteLine($"Encrypt Enigma:\t{EnigmaHelper.WriteToFile(encryptedMessage, fileNameEncrypt)}");
+    
+    var decryptedMessage = enigmaDecrypt.Decrypt(encryptedMessage);
+    Console.WriteLine($"Decrypt Enigma:\t{EnigmaHelper.WriteToFile(decryptedMessage, fileNameDecrypt)}");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"[ERROR] {ex.Message}");
+}

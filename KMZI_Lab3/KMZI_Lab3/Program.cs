@@ -3,19 +3,11 @@ const ulong m = 421;
 const ulong n = 457;
 
 
-Console.WriteLine($"Число {23572} в канонической форме:");
-foreach (var prime in Modular.GetCanonicalForm(23572))
-    Console.Write($"{prime} ");
+Console.WriteLine($"Число {23572} в канонической форме:  {Modular.GetCanonicalForm(23572)}");
+Console.WriteLine($"Число {m} в канонической форме:    {Modular.GetCanonicalForm(m)}");
+Console.WriteLine($"Число {n} в канонической форме:    {Modular.GetCanonicalForm(n)}");
 
-Console.WriteLine($"\nЧисло {m} в канонической форме:");
-foreach (var prime in Modular.GetCanonicalForm(m))
-    Console.Write($"{prime} ");
-
-Console.WriteLine($"\nЧисло {n} в канонической форме:");
-foreach (var prime in Modular.GetCanonicalForm(n))
-    Console.Write($"{prime} ");
-
-Console.WriteLine($"\n\nЯвляется ли число {m}{n} простым?\n{Modular.IsPrimeByNumbersConcat(m, n)}");
+Console.WriteLine($"\nЯвляется ли число {m}{n} простым?\n{Modular.IsPrimeByNumbersConcat(m, n)}");
 
 Console.WriteLine($"\nНОД ({m}, {n}) = {Modular.GetGCD(m, n)}");
 Console.WriteLine($"НОД (4, 8, 32) = {Modular.GetGCD(4, Modular.GetGCD(32, 8))}");

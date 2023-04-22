@@ -64,28 +64,33 @@ public class Modular
 
 
     // Представить число в виде канонического разложения на множители
-    public static List<ulong> GetCanonicalForm(ulong n)
+    public static string GetCanonicalForm(ulong number)
     {
-        var primes = new List<ulong>();
-        var divisor = 2u;
-
-        while (n > 1)
+        var result = "";
+        var divisor = 2ul;
+        while (number > 1)
         {
-            while (n % divisor == 0)
+            var power = 0;
+            while (number % divisor == 0)
             {
-                primes.Add(divisor);
-                n /= divisor;
+                number /= divisor;
+                power++;
             }
-
+            if (power > 0)
+            {
+                result += divisor.ToString();
+                if (power > 1)
+                {
+                    result += "^" + power.ToString();
+                }
+                if (number > 1)
+                {
+                    result += " * ";
+                }
+            }
             divisor++;
-            if (divisor * divisor > n)
-            {
-                if (n > 1)
-                    primes.Add(n);
-                break;
-            }
         }
-        return primes;
+        return result;
     }
 
 

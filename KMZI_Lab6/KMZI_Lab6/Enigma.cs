@@ -33,12 +33,35 @@ public class Enigma
     int rotorMiddleStep = 1;
     int rotorLeftStep  =  1;
 
-    public Enigma() { alphabetReflector = FillTheRelector(); }
-
-
-    public string Encrypt(char[] openText)
+    public Enigma(int rightRotorPosition, int middleRotorPosition, int leftRotorPosition) 
     {
+        if (rightRotorPosition >= 0  && rightRotorPosition  < length &&
+            middleRotorPosition >= 0 && middleRotorPosition < length &&
+            leftRotorPosition  >= 0  && leftRotorPosition  <  length)
+        {
+            rotorRightCurrentPostition =  rightRotorPosition;
+            rotorMiddleCurrentPostition = middleRotorPosition;
+            rotorLeftCurrentPostition  =  leftRotorPosition;
+        }
+        else
+        {
+            throw new Exception($"Rotors positions must be between 0 and {length - 1}");
+        }
+        alphabetReflector = FillTheRelector(); 
+    }
+
+
+
+    public char[] Encrypt(char[] openText)
+    {
+        // если роторы установлены в ненулевую стартовую позицию,
+        // то необходимо принять общее кол-во сдвигов
+        // равным текущей позиции (нужно для вычислений ниже)
+        rotorRightTotalOffsets = rotorRightCurrentPostition;
+        rotorMiddleTotalOffsets = rotorMiddleCurrentPostition;
+        rotorLeftTotalOffsets = rotorLeftCurrentPostition;
         var sb = new System.Text.StringBuilder();
+
 
         foreach (char letter in openText)
         {
@@ -47,10 +70,10 @@ public class Enigma
                 // 1. заменить на символ из правого ротора
                 var letterAfterRightRotor = EncryptWithRotor(letter, alphabetOpen, alphabetRightRotor, rotorRightCurrentPostition);
 
-                // 2. заменить на символ из среднего ротора (првоерить поворот предыдущего, если был круг, то на 1 символ)
+                // 2. заменить на символ из среднего ротора
                 var letterAfterMiddleRotor = EncryptWithRotor(letterAfterRightRotor, alphabetOpen, alphabetMiddleRotor, rotorMiddleCurrentPostition);
 
-                // 3. заменить на символ из левого ротора (првоерить поворот среднего, если был круг, то на 1 символ)
+                // 3. заменить на символ из левого ротора
                 var letterAfterLeftRotor = EncryptWithRotor(letterAfterMiddleRotor, alphabetOpen, alphabetLeftRotor, rotorLeftCurrentPostition);
 
                 // 4. подставить символ из рефлектора
@@ -93,8 +116,61 @@ public class Enigma
             else
                 sb.Append(letter);
         }
-        return sb.ToString();   
+        return sb.ToString().ToCharArray();   
     }
+
+
+
+    // аналогичный метод для расшифрования, изменяется только
+    // EncryptWithRotor() -> DecryptWithRotor()
+    public char[] Decrypt(char[] openText)
+    {
+        rotorRightTotalOffsets = rotorRightCurrentPostition;
+        rotorMiddleTotalOffsets = rotorMiddleCurrentPostition;
+        rotorLeftTotalOffsets = rotorLeftCurrentPostition;
+        var sb = new System.Text.StringBuilder();
+
+        foreach (char letter in openText)
+        {
+            if (alphabetOpen.Contains(letter))
+            {
+                var letterAfterRightRotor = DecryptWithRotor(letter, alphabetOpen, alphabetRightRotor, rotorRightCurrentPostition);
+                var letterAfterMiddleRotor = DecryptWithRotor(letterAfterRightRotor, alphabetOpen, alphabetMiddleRotor, rotorMiddleCurrentPostition);
+                var letterAfterLeftRotor = DecryptWithRotor(letterAfterMiddleRotor, alphabetOpen, alphabetLeftRotor, rotorLeftCurrentPostition);
+                var letterAfterReflector = EncryptWithReflector(letterAfterLeftRotor);
+                var letterAfterLeftRotorBackwards = DecryptWithRotor(letterAfterReflector, alphabetLeftRotor, alphabetOpen, rotorLeftCurrentPostition);
+                var letterAfterMiddleRotorBackwards = DecryptWithRotor(letterAfterLeftRotorBackwards, alphabetMiddleRotor, alphabetOpen, rotorMiddleCurrentPostition);
+                var letterAfterRightRotorBackwards = DecryptWithRotor(letterAfterMiddleRotorBackwards, alphabetRightRotor, alphabetOpen, rotorRightCurrentPostition);
+
+                rotorRightTotalOffsets += rotorRightStep;
+                rotorRightCurrentPostition = rotorRightTotalOffsets % length;
+
+                if (rotorRightTotalOffsets / length > 0)  
+                {
+                    rotorRightFullRotations = rotorRightTotalOffsets / length; 
+                    rotorMiddleTotalOffsets = rotorRightFullRotations * rotorMiddleStep; 
+                    rotorMiddleCurrentPostition = rotorMiddleTotalOffsets % length; 
+                }
+                if (rotorMiddleTotalOffsets / length > 0)  
+                {
+                    rotorMiddleFullRotations = rotorMiddleTotalOffsets / length; 
+                    rotorLeftTotalOffsets = rotorMiddleFullRotations * rotorLeftStep;
+                    rotorLeftCurrentPostition = rotorLeftTotalOffsets % length;
+                }
+                if (rotorLeftTotalOffsets / length > 0)
+                {
+                    rotorLeftFullRotations = rotorLeftTotalOffsets / length; 
+                }
+
+                sb.Append(letterAfterRightRotorBackwards);
+            }
+            else
+                sb.Append(letter);
+        }
+        return sb.ToString().ToCharArray();
+    }
+
+
 
 
     // зашифровать поворотом ротора
@@ -102,6 +178,16 @@ public class Enigma
     {
         var index = alphabet.IndexOf(letter);
         var indexEncrypted = (index + offset) % length;
+        var letterEncrypted = alphabetEncryption[indexEncrypted];
+        return letterEncrypted;
+    }
+
+
+    // дешифровать поворотом ротора
+    private char DecryptWithRotor(char letter, string alphabet, string alphabetEncryption, int offset)
+    {
+        var index = alphabet.IndexOf(letter);
+        var indexEncrypted = (index - offset + length) % length;
         var letterEncrypted = alphabetEncryption[indexEncrypted];
         return letterEncrypted;
     }

@@ -68,6 +68,20 @@ public class SwapHelper
     }
 
 
+    // Считать двумерный массив по строкам
+    public static char[,] GetTableByColumns(char[,] inputArray)
+    {
+        var rows = inputArray.GetLength(0);
+        var columns = inputArray.GetLength(1);
+        var outputArray = new char[rows, columns];
+
+        for (int j = columns - 1; j >= 0; j--)
+            for (int i = 0; i < rows; i++)
+                outputArray[i, j] = inputArray[i, j];
+        return outputArray;
+    }
+
+
     // Конвертировать двумерный массив char[,] в одномерный массив char[]
     public static char[] ConvertToOneDimentionalArray(char[,] array) => array.Cast<char>().ToArray();
 

@@ -90,9 +90,12 @@ public class Swap
             for (var i = 0; i < rows; i++)
                 tableWithSwappedRowsAndColumns[i, j] = tableWithSwappedRows[i, indexesColumns[j]];
 
+        /// считать по столбцам
+        var encryptedTableByColumns = SwapHelper.GetTableByColumns(tableWithSwappedRowsAndColumns);
+
         stopWatch.Stop();
         Console.WriteLine($"Encrypt Multiple Swap:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
-        return tableWithSwappedRowsAndColumns;
+        return encryptedTableByColumns;
     }
 
 
@@ -118,10 +121,13 @@ public class Swap
         for (var j = 0; j < cols; j++)
             for (var i = 0; i < rows; i++)
                 tableWithSwappedRowsAndColumns[i, indexesColumns[j]] = tableWithSwappedRows[i, j];
-        
+
+        /// считать по столбцам
+        var encryptedTableByColumns = SwapHelper.GetTableByColumns(tableWithSwappedRowsAndColumns);
+
         stopWatch.Stop();
         Console.WriteLine($"Decrypt Multiple Swap:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
-        return tableWithSwappedRowsAndColumns;
+        return encryptedTableByColumns;
     }
 
 
