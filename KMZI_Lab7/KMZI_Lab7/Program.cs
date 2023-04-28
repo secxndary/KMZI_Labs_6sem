@@ -1,8 +1,9 @@
 ﻿using KMZI_Lab7;
 
+var firstKey  = "my1stKey";
+var secondKey = "my2ndKey";
+var text = "hello world hehehe";
 
-var key = Cypher.GetValidKey(Cypher.GetBytes("myKey"));
-var encrypt = Cypher.Encrypt("hello world heheh", key);
-
-var decrypt = Cypher.Decrypt(encrypt, key);
-Console.WriteLine(decrypt);
+var encryptEEE2 = Cypher.EncryptEEE2(Cypher.GetBytes(text), firstKey, secondKey);
+var decryptEEE2 = Cypher.DecryptEEE2(encryptEEE2, firstKey, secondKey);
+Console.WriteLine(Cypher.GetString(decryptEEE2));
