@@ -8,6 +8,8 @@ class Cypher
     // Зашифрование с помощью алгоритма DES
     public static byte[] EncryptDES(byte[] plainText, byte[] key, out int changedBits)
     {
+        var initialPlainText = CypherHelper.GetOpenText();
+
         using (var des = DES.Create())
         {
             var validKey = CypherHelper.GetValidKey(key);
@@ -18,7 +20,7 @@ class Cypher
             using (var encryptor = des.CreateEncryptor())
             {
                 var cipherBytes = encryptor.TransformFinalBlock(plainText, 0, plainText.Length);
-                changedBits = GetAvalancheEffect(plainText, cipherBytes);
+                changedBits = GetAvalancheEffect(initialPlainText, cipherBytes);
                 return cipherBytes;
             }
         }
@@ -52,10 +54,12 @@ class Cypher
         var stopWatch = new Stopwatch();
         stopWatch.Start();
 
-        var firstEncrypt = EncryptDES(plainText, key1, out changedBits);
-        var secondEncrypt = EncryptDES(firstEncrypt, key2, out changedBits);
-        var thirdEncrypt = EncryptDES(secondEncrypt, key1, out changedBits);
+        int changedBitsFirstDES, changedBitsSecondDES, changedBitsThirdDES;
+        var firstEncrypt  = EncryptDES(plainText, key1, out changedBitsFirstDES);
+        var secondEncrypt = EncryptDES(firstEncrypt, key2, out changedBitsSecondDES);
+        var thirdEncrypt  = EncryptDES(secondEncrypt, key1, out changedBitsThirdDES);
 
+        changedBits = changedBitsFirstDES + changedBitsSecondDES + changedBitsThirdDES;
         stopWatch.Stop();
         Console.WriteLine($"Encrypt DES-EEE2:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
         return thirdEncrypt;
@@ -81,13 +85,13 @@ class Cypher
 
 
     // Получить количество изменённых битов в тексте (лавинный эффект)
-    public static int GetAvalancheEffect(byte[] openText, byte[] encryptedText)
+    public static int GetAvalancheEffect(byte[] initialOpenText, byte[] encryptedText)
     {
         var changedBits = 0;
 
-        for (int i = 0; i < openText.Length; i++)
+        for (int i = 0; i < initialOpenText.Length; i++)
         {
-            var originalByte = openText[i];
+            var originalByte = initialOpenText[i];
             var encryptedByte = encryptedText[i];
 
             int xor = originalByte ^ encryptedByte;

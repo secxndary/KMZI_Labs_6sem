@@ -34,14 +34,6 @@ public class CypherHelper
     }
 
 
-    // Чтение текста из файла
-    public static byte[] ReadFromFile(string fileName = fileNameDecrypt)
-    {
-        var filePath = Path.Combine(pathToFolder, fileName);
-        return File.ReadAllBytes(filePath);
-    }
-
-
     // Запись текста в файл
     public static bool WriteToFile(byte[] text, string fileName = fileNameEncrypt)
     {
@@ -56,6 +48,14 @@ public class CypherHelper
             Console.WriteLine(ex.Message);
             return false;
         }
+    }
+
+
+    // Чтение текста из файла
+    public static byte[] ReadFromFile(string fileName = fileNameDecrypt)
+    {
+        var filePath = Path.Combine(pathToFolder, fileName);
+        return File.ReadAllBytes(filePath);
     }
 
 
