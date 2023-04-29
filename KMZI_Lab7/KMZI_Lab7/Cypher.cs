@@ -1,12 +1,12 @@
-﻿using System.Diagnostics;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
+using System.Diagnostics;
 namespace KMZI_Lab7;
 
 
 class Cypher
 {
     // Зашифрование с помощью алгоритма DES
-    public static byte[] EncryptDES(byte[] plainText, byte[] key)
+    public static byte[] EncryptDES(byte[] plainText, byte[] key, out int changedBits)
     {
         using (var des = DES.Create())
         {
@@ -18,10 +18,12 @@ class Cypher
             using (var encryptor = des.CreateEncryptor())
             {
                 var cipherBytes = encryptor.TransformFinalBlock(plainText, 0, plainText.Length);
+                changedBits = GetAvalancheEffect(plainText, cipherBytes);
                 return cipherBytes;
             }
         }
     }
+
 
 
     // Расшифрование с помощью алгоритма DES
@@ -43,20 +45,22 @@ class Cypher
     }
 
 
+
     // Зашифрование с помощью алгоритма DES-EEE2
-    public static byte[] EncryptEEE2(byte[] plainText, byte[] key1, byte[] key2)
+    public static byte[] EncryptEEE2(byte[] plainText, byte[] key1, byte[] key2, out int changedBits)
     {
         var stopWatch = new Stopwatch();
         stopWatch.Start();
 
-        var firstEncrypt  = EncryptDES(plainText, key1);
-        var secondEncrypt = EncryptDES(firstEncrypt, key2);
-        var thirdEncrypt  = EncryptDES(secondEncrypt, key1);
+        var firstEncrypt = EncryptDES(plainText, key1, out changedBits);
+        var secondEncrypt = EncryptDES(firstEncrypt, key2, out changedBits);
+        var thirdEncrypt = EncryptDES(secondEncrypt, key1, out changedBits);
 
         stopWatch.Stop();
         Console.WriteLine($"Encrypt DES-EEE2:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
         return thirdEncrypt;
     }
+
 
 
     // Расшифрование с помощью алгоритма DES-EEE2
@@ -65,12 +69,36 @@ class Cypher
         var stopWatch = new Stopwatch();
         stopWatch.Start();
 
-        var firstDecrypt  = DecryptDES(encryptText, key1);
+        var firstDecrypt = DecryptDES(encryptText, key1);
         var secondDecrypt = DecryptDES(firstDecrypt, key2);
-        var thirdDecrypt  = DecryptDES(secondDecrypt, key1);
+        var thirdDecrypt = DecryptDES(secondDecrypt, key1);
 
         stopWatch.Stop();
         Console.WriteLine($"Decrypt DES-EEE2:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
         return thirdDecrypt;
+    }
+
+
+
+    // Получить количество изменённых битов в тексте (лавинный эффект)
+    public static int GetAvalancheEffect(byte[] openText, byte[] encryptedText)
+    {
+        var changedBits = 0;
+        
+        for (int i = 0; i < openText.Length; i++)
+        {
+            var originalByte = openText[i];
+            var encryptedByte = encryptedText[i];
+
+            int xor = originalByte ^ encryptedByte;
+            while (xor != 0)
+            {
+                if ((xor & 1) == 1)
+                    changedBits++;
+                xor >>= 1;
+            }
+        }
+        
+        return changedBits;
     }
 }
