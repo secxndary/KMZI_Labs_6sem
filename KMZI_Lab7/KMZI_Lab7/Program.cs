@@ -8,7 +8,7 @@ var plainText = CypherHelper.GetOpenText();
 
 
 var encryptedText = Cypher.EncryptEEE2(plainText, firstKey, secondKey);
-Console.WriteLine($"Encrypt DES-EEE2:\t{CypherHelper.WriteToFile(encryptedText, fileNameEncrypt)}");
+CypherHelper.WriteToFile(encryptedText, fileNameEncrypt);
 
 var decryptedText = Cypher.DecryptEEE2(encryptedText, firstKey, secondKey);
-Console.WriteLine($"Decrypt DES-EEE2:\t{CypherHelper.WriteToFile(decryptedText, fileNameDecrypt)}");
+CypherHelper.WriteToFile(decryptedText, fileNameDecrypt);

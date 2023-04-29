@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Diagnostics;
+using System.Security.Cryptography;
 namespace KMZI_Lab7;
 
 
@@ -45,9 +46,15 @@ class Cypher
     // Зашифрование с помощью алгоритма DES-EEE2
     public static byte[] EncryptEEE2(byte[] plainText, byte[] key1, byte[] key2)
     {
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
+
         var firstEncrypt  = EncryptDES(plainText, key1);
         var secondEncrypt = EncryptDES(firstEncrypt, key2);
         var thirdEncrypt  = EncryptDES(secondEncrypt, key1);
+
+        stopWatch.Stop();
+        Console.WriteLine($"Encrypt DES-EEE2:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
         return thirdEncrypt;
     }
 
@@ -55,9 +62,15 @@ class Cypher
     // Расшифрование с помощью алгоритма DES-EEE2
     public static byte[] DecryptEEE2(byte[] encryptText, byte[] key1, byte[] key2)
     {
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
+
         var firstDecrypt  = DecryptDES(encryptText, key1);
         var secondDecrypt = DecryptDES(firstDecrypt, key2);
         var thirdDecrypt  = DecryptDES(secondDecrypt, key1);
+
+        stopWatch.Stop();
+        Console.WriteLine($"Decrypt DES-EEE2:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
         return thirdDecrypt;
     }
 }
