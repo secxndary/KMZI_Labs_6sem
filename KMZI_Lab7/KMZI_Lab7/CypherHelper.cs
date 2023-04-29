@@ -10,6 +10,7 @@ public class CypherHelper
     const string fileNameDecrypt = "decrypt_eee2.txt";
 
 
+
     // Вспомогательная функция для создания валидного 64-битного ключа 
     public static byte[] GetValidKey(byte[] key)
     {
@@ -68,4 +69,8 @@ public class CypherHelper
 
     // Получить массив byte[] с исходным текстом
     public static byte[] GetOpenText() => ReadFromFile(fileNameOpen);
+
+
+    // Получить кол-во битов в массиве byte[]
+    public static int GetTotalBits(byte[] bytes) => bytes.Length * 8;
 }

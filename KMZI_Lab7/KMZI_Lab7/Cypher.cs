@@ -84,7 +84,7 @@ class Cypher
     public static int GetAvalancheEffect(byte[] openText, byte[] encryptedText)
     {
         var changedBits = 0;
-        
+
         for (int i = 0; i < openText.Length; i++)
         {
             var originalByte = openText[i];
@@ -98,7 +98,7 @@ class Cypher
                 xor >>= 1;
             }
         }
-        
+
         return changedBits;
     }
 }
