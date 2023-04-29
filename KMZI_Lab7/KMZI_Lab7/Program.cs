@@ -1,9 +1,14 @@
 ﻿using KMZI_Lab7;
 
-var firstKey  = "my1stKey";
-var secondKey = "my2ndKey";
-var text = "hello world hehehe";
+var fileNameEncrypt = "encrypt_eee2.txt";
+var fileNameDecrypt = "decrypt_eee2.txt";
+var firstKey  = CypherHelper.GetBytes("my1stKey");
+var secondKey = CypherHelper.GetBytes("my2ndKey");
+var plainText = CypherHelper.GetOpenText();
 
-var encryptEEE2 = Cypher.EncryptEEE2(Cypher.GetBytes(text), firstKey, secondKey);
-var decryptEEE2 = Cypher.DecryptEEE2(encryptEEE2, firstKey, secondKey);
-Console.WriteLine(Cypher.GetString(decryptEEE2));
+
+var encryptedText = Cypher.EncryptEEE2(plainText, firstKey, secondKey);
+Console.WriteLine($"Encrypt DES-EEE2:\t{CypherHelper.WriteToFile(encryptedText, fileNameEncrypt)}");
+
+var decryptedText = Cypher.DecryptEEE2(encryptedText, firstKey, secondKey);
+Console.WriteLine($"Decrypt DES-EEE2:\t{CypherHelper.WriteToFile(decryptedText, fileNameDecrypt)}");
