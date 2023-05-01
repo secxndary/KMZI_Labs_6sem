@@ -11,7 +11,7 @@ public class CypherHelper
 
 
 
-    // Вспомогательная функция для создания валидного 64-битного ключа 
+    // Вспомогательная функция для создания валидного 64-битного ключа
     public static byte[] GetValidKey(byte[] key)
     {
         byte[] newKey = new byte[8];
@@ -73,4 +73,9 @@ public class CypherHelper
 
     // Получить кол-во битов в массиве byte[]
     public static int GetTotalBits(byte[] bytes) => bytes.Length * 8;
+
+
+    // Получить процентное соотношение
+    public static double GetPercentageRatio(int total, int changed) => 
+        Math.Round((float)changed / total * 100, 2);
 }

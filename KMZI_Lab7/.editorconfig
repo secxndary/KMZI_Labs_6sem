@@ -1,4 +1,0 @@
-﻿[*.cs]
-
-# CA5351: Не используйте взломанные алгоритмы шифрования
-dotnet_diagnostic.CA5351.severity = none

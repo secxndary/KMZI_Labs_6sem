@@ -59,8 +59,8 @@ class Cypher
         var secondEncrypt = EncryptDES(firstEncrypt, key2, out changedBitsSecondDES);
         var thirdEncrypt  = EncryptDES(secondEncrypt, key1, out changedBitsThirdDES);
 
-        changedBits = changedBitsFirstDES + changedBitsSecondDES + changedBitsThirdDES;
         stopWatch.Stop();
+        changedBits = changedBitsThirdDES;
         Console.WriteLine($"Encrypt DES-EEE2:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
         return thirdEncrypt;
     }
@@ -73,9 +73,9 @@ class Cypher
         var stopWatch = new Stopwatch();
         stopWatch.Start();
 
-        var firstDecrypt = DecryptDES(encryptText, key1);
+        var firstDecrypt  = DecryptDES(encryptText, key1);
         var secondDecrypt = DecryptDES(firstDecrypt, key2);
-        var thirdDecrypt = DecryptDES(secondDecrypt, key1);
+        var thirdDecrypt  = DecryptDES(secondDecrypt, key1);
 
         stopWatch.Stop();
         Console.WriteLine($"Decrypt DES-EEE2:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
