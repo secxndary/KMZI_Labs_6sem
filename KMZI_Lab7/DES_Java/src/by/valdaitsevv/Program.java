@@ -16,7 +16,7 @@ import java.security.spec.InvalidKeySpecException;
 class Program {
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidKeySpecException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
         //String we want to encrypt
-        String message = "hello world hello world hello world hello world hello world hello world hello world";
+        String message = "hello world всем привет кто любит криптогарфию";
         byte[] myMessage = message.getBytes(); //string to byte array as DES works on bytes
 
         //If you want to use your own key
@@ -48,10 +48,12 @@ class Program {
         String encryptedData = new String(myEncryptedBytes);
         String decryptedData = new String(myDecryptedBytes);
 
-        System.out.println("Message:\t\t\t" + message);
+        System.out.println("\nMessage:\t\t\t" + message);
         System.out.println("Encrypted:\t\t\t" + encryptedData);
-        System.out.println("Decrypted:\t\t\t" + decryptedData);
-        System.out.println("Avalanche Effect:\t" + DES.GetAvalancheEffect(myMessage, myEncryptedBytes) + " bits changed");
+        System.out.println("Decrypted:\t\t\t" + decryptedData + "\n");
+        System.out.println("Avalanche Effect:\t" + DES.GetAvalancheEffect(myMessage, myEncryptedBytes) + " bits (changed)");
         System.out.println("Total bits:\t\t\t" + myEncryptedBytes.length * 8 + " bits");
+        System.out.println("Percentage ratio:\t" +
+                ((float)DES.GetAvalancheEffect(myMessage, myEncryptedBytes) / (myEncryptedBytes.length * 8)) * 100 + "%");
     }
 }
