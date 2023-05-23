@@ -23,6 +23,7 @@ public class BBS
     }
 
 
+    // Генерация псевдослучайного числа длиной numberOfBits битов
     public long GenerateBBSRandom(int numberOfBits)
     {
         long result = 0;
