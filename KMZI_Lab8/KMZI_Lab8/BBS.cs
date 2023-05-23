@@ -1,4 +1,5 @@
-﻿namespace KMZI_Lab8;
+﻿using System.Diagnostics;
+namespace KMZI_Lab8;
 
 public class BBS
 {
@@ -26,6 +27,9 @@ public class BBS
     // Генерация псевдослучайного числа длиной numberOfBits битов
     public long GenerateBBSRandom(int numberOfBits)
     {
+        //var stopWatch = new Stopwatch();
+        //stopWatch.Start();
+
         long result = 0;
         long x = this.x;
 
@@ -36,6 +40,8 @@ public class BBS
             result = (result << 1) | bit;
         }
 
+        //stopWatch.Stop();
+        //Console.WriteLine($"Time elapsed BBS:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
         return result;
     }
 }

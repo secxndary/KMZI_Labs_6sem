@@ -9,8 +9,10 @@ long x = 512;
 var numberOfBits = 16;
 
 var BBS = new BBS(p, q, x);
-Console.WriteLine($"BBS random number:\t{BBS.GenerateBBSRandom(numberOfBits)}");
-Console.WriteLine($"BBS number (binary):\t{Convert.ToString(BBS.GenerateBBSRandom(numberOfBits), 2)}\n");
+var pseudoRandomNumberBBS = BBS.GenerateBBSRandom(numberOfBits);
+Console.WriteLine($"BBS random number:\t{pseudoRandomNumberBBS}");
+Console.WriteLine($"BBS number (binary):\t{Convert.ToString(pseudoRandomNumberBBS, 2)}");
+Console.WriteLine();
 
 
 
@@ -21,7 +23,7 @@ var RC4 = new RC4(n);
 
 var fileNameEncrypt = "encrypt_rc4.txt";
 var fileNameDecrypt = "decrypt_rc4.txt";
-var key = CypherHelper.GetBytes("my_RC4_key");
+var key = new byte[] { 12, 13, 90, 91, 240 };
 var openText = CypherHelper.GetOpenText();
 
 var sBlock = RC4.InitializeSBox(key);
@@ -29,5 +31,5 @@ var keyStream = RC4.GenerateKeyStream(sBlock, openText.Length);
 var encryptedText = RC4.Encrypt(openText, keyStream);
 var decryptedText = RC4.Decrypt(encryptedText, keyStream);
 
-CypherHelper.WriteToFile(encryptedText, fileNameEncrypt);
-CypherHelper.WriteToFile(decryptedText, fileNameDecrypt);
+Console.WriteLine($"Encrypt RC4:\t\t{CypherHelper.WriteToFile(encryptedText, fileNameEncrypt)}");
+Console.WriteLine($"Decrypt RC4:\t\t{CypherHelper.WriteToFile(decryptedText, fileNameDecrypt)}");

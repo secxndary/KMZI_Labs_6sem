@@ -1,14 +1,15 @@
-﻿namespace KMZI_Lab8;
+﻿using System.Diagnostics;
+namespace KMZI_Lab8;
 
 public class RC4
 {
     private int n;
-    private double mod;
+    private int mod;
 
     public RC4(int n)
     {
         this.n = n;
-        mod = Math.Pow(2, n);
+        mod = (int)Math.Pow(2, n);
     }
 
 
@@ -17,14 +18,14 @@ public class RC4
     public byte[] InitializeSBox(byte[] key)
     {
         var j = 0;
-        var sBlock = new byte[256];
+        var sBlock = new byte[mod];
 
-        for (var i = 0; i < 256; i++)
+        for (var i = 0; i < mod; i++)
             sBlock[i] = (byte)i;
 
-        for (var i = 0; i < 256; i++)
+        for (var i = 0; i < mod; i++)
         {
-            j = (j + key[i % key.Length] + sBlock[i]) % 256;
+            j = (j + key[i % key.Length] + sBlock[i]) % mod;
             Swap(sBlock, i, j);
         }
 
@@ -35,18 +36,23 @@ public class RC4
     // Генерация К-слов с помощью ПСП
     public byte[] GenerateKeyStream(byte[] sBlock, int length)
     {
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
+
         var i = 0;
         var j = 0;
         var keyStream = new byte[length];
 
         for (var k = 0; k < length; k++)
         {
-            i = (i + 1) % 256;
-            j = (j + sBlock[i]) % 256;
+            i = (i + 1) % mod;
+            j = (j + sBlock[i]) % mod;
             Swap(sBlock, i, j);
-            keyStream[k] = sBlock[(sBlock[i] + sBlock[j]) % 256];
+            keyStream[k] = sBlock[(sBlock[i] + sBlock[j]) % mod];
         }
 
+        stopWatch.Stop();
+        Console.WriteLine($"Time elapsed RC4:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
         return keyStream;
     }
 
