@@ -1,5 +1,8 @@
 ﻿using System.Collections;
+using System.Linq;
 using System.Numerics;
+using System.Text;
+
 namespace KMZI_Lab9;
 
 
@@ -51,7 +54,7 @@ public class Cypher
 
         foreach (byte b in plaintext)
         {
-            string binaryString = Convert.ToString(b, 2);
+            string binaryString = Convert.ToString(b, 2).PadLeft(8, '0');
 
             var positions = new List<int>();
             for (int i = 0; i < binaryString.Length; i++)
@@ -70,20 +73,42 @@ public class Cypher
     }
 
 
+    // Расшифрование
+    public static byte[] Decrypt(List<BigInteger> privateKey, List<BigInteger> encryptedText, BigInteger a, BigInteger n)
+    {
+        var decryptedBytes = new List<byte>();
+        BigInteger inverse = GetInverseNumber(a, n);
+
+        foreach (BigInteger cipher in encryptedText)
+        {
+            BigInteger decryptedValue = (cipher * inverse) % n;
+            var binaryString = CypherHelper.ReverseString(GetBinaryRepresentation(decryptedValue, privateKey));
+            byte decryptedByte = Convert.ToByte(binaryString, 2);
+            decryptedBytes.Add(decryptedByte);
+        }
+
+        return decryptedBytes.ToArray();
+    }
+
 
 
     // Сгенерировать большое число размером n бит
     public static BigInteger GenerateRandomNumber(int n)
     {
         var random = new Random();
-        byte[] bytes = new byte[(n + 7) / 8];
-        random.NextBytes(bytes);
+        BigInteger randomNumber = BigInteger.Zero;
 
-        var numExtraBits = n % 8;
-        if (numExtraBits > 0)
-            bytes[bytes.Length - 1] &= (byte)(255 >> ((bytes.Length * 8) - n));
+        while (randomNumber == BigInteger.Zero)
+        {
+            byte[] bytes = new byte[(n + 7) / 8];
+            random.NextBytes(bytes);
 
-        var randomNumber = new BigInteger(bytes);
+            var numExtraBits = n % 8;
+            if (numExtraBits > 0)
+                bytes[bytes.Length - 1] &= (byte)(255 >> ((bytes.Length * 8) - n));
+            randomNumber = new BigInteger(bytes);
+        }
+
         return randomNumber;
     }
 
@@ -99,13 +124,51 @@ public class Cypher
         }
     }
 
-    // Получить строку в байтах
-    public static string GetBytes(string str)
+    // Представить число BigInteger в виде бинарной строки string
+    public static string GetBinaryRepresentation(BigInteger number, List<BigInteger> privateKey)
     {
-        var res = "";
-        for (int i = 0; i < str.Length; i++)
-            res += Convert.ToString(str[i], 2);
-        return res;
+        var binaryString = new StringBuilder();
+
+        for (int i = privateKey.Count - 1; i >= 0; i--)
+        {
+            if (number >= privateKey[i])
+            {
+                binaryString.Append("1");
+                number -= privateKey[i];
+            }
+            else
+                binaryString.Append("0");
+        }
+
+        return binaryString.ToString();
+    }
+
+    // Получить обратное по модулю число
+    public static BigInteger GetInverseNumber(BigInteger number, BigInteger modulus)
+    {
+        BigInteger m0 = modulus;
+        BigInteger y = 0, x = 1;
+
+        if (modulus == 1)
+            return 0;
+
+        while (number > 1)
+        {
+            BigInteger quotient = BigInteger.Divide(number, modulus);
+            BigInteger temp = modulus;
+
+            modulus = BigInteger.Remainder(number, modulus);
+            number = temp;
+
+            temp = y;
+            y = x - quotient * y;
+            x = temp;
+        }
+
+        if (x < 0)
+            x += m0;
+
+        return x;
     }
 
     // Получить сумму чисел в List<BigInteger>
