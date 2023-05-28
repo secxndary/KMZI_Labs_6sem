@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Numerics;
+using System.Text;
 namespace KMZI_Lab9;
 
 
@@ -35,6 +36,17 @@ public class CypherHelper
     }
 
 
+    // Запись списка чисел в файл
+    public static void WriteToFile(List<BigInteger> numbers, string fileName = fileNameEncrypt)
+    {
+        using (var writer = new StreamWriter(Path.Combine(pathToFolder, fileName)))
+        {         
+            foreach (BigInteger number in numbers)
+                writer.Write(number.ToString() + " ");
+        }
+    }
+
+
 
     // Получить массив byte[] с исходным текстом
     public static byte[] GetOpenText() => ReadFromFile(fileNameOpen);
@@ -42,7 +54,6 @@ public class CypherHelper
 
     // Конвертация строки в массив byte[]
     public static byte[] GetBytes(string str) => Encoding.UTF8.GetBytes(str);
-
 
     // Конвертация массива byte[] в строку
     public static string GetString(byte[] bytes) => Encoding.UTF8.GetString(bytes);

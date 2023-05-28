@@ -1,7 +1,9 @@
 ﻿using KMZI_Lab9;
+const string fileNameEncrypt = "encrypt.txt";
+const string fileNameDecrypt = "decrypt.txt";
 
 var z = 8;
-var sizeBits = 2;
+var sizeBits = 100;
 var initialNumber = Cypher.GenerateRandomNumber(sizeBits);
 var privateKey = Cypher.GeneratePrivateKey(initialNumber, z);
 
@@ -11,21 +13,15 @@ var a = Cypher.GenerateCoprime(n);
 var publicKey = Cypher.GeneratePublicKey(privateKey, a, n);
 
 
+Console.WriteLine("==================================\n");
 var openText = CypherHelper.GetOpenText();
 var encryptedText = Cypher.Encrypt(publicKey, openText);
 var decryptedText = Cypher.Decrypt(privateKey, encryptedText, a, n);
+CypherHelper.WriteToFile(encryptedText, fileNameEncrypt);
+CypherHelper.WriteToFile(decryptedText, fileNameDecrypt);
 
 
-Console.WriteLine("Закрытый ключ: ");
+Console.WriteLine("\n=========  Private Key  ==========");
 privateKey.ForEach(x => Console.WriteLine(x));
-Console.WriteLine("==================================");
-
-
-Console.WriteLine("Открытый ключ: ");
+Console.WriteLine("\n==========  Public Key  ==========");
 publicKey.ForEach(x => Console.WriteLine(x));
-Console.WriteLine("==================================");
-
-
-Console.WriteLine("Шифротекст: ");
-encryptedText.ForEach(x => Console.Write($"{x} "));
-CypherHelper.WriteToFile(decryptedText);

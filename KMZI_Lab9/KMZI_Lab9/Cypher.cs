@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Numerics;
 using System.Text;
-
 namespace KMZI_Lab9;
 
 
@@ -14,6 +12,7 @@ public class Cypher
     {
         List<BigInteger> sequence = new List<BigInteger>();
         BigInteger term = initialNumber;
+        quantityOfNumbers = 8;  // заглушка
 
         for (int i = 0; i < quantityOfNumbers; i++)
         {
@@ -34,7 +33,7 @@ public class Cypher
         if (n <= sum)
             throw new ArgumentException("n should be more than sum of all numbers in private key.");
         if (!AreRelativelyPrime(a, n))
-            throw new ArgumentException("a and n should be .");
+            throw new ArgumentException("a and n should be coprime.");
 
         var publicKey = new List<BigInteger>();
         foreach (BigInteger d in privateKey)
@@ -50,6 +49,8 @@ public class Cypher
     // Зашифрование
     public static List<BigInteger> Encrypt(List<BigInteger> publicKey, byte[] plaintext)
     {
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
         var encryptedList = new List<BigInteger>();
 
         foreach (byte b in plaintext)
@@ -69,6 +70,8 @@ public class Cypher
             encryptedList.Add(sum);
         }
 
+        stopWatch.Stop();
+        Console.WriteLine($"Encrypt:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
         return encryptedList;
     }
 
@@ -76,6 +79,8 @@ public class Cypher
     // Расшифрование
     public static byte[] Decrypt(List<BigInteger> privateKey, List<BigInteger> encryptedText, BigInteger a, BigInteger n)
     {
+        var stopWatch = new Stopwatch();
+        stopWatch.Start();
         var decryptedBytes = new List<byte>();
         BigInteger inverse = GetInverseNumber(a, n);
 
@@ -87,6 +92,8 @@ public class Cypher
             decryptedBytes.Add(decryptedByte);
         }
 
+        stopWatch.Stop();
+        Console.WriteLine($"Decrypt:\t{stopWatch.ElapsedTicks} ticks ({stopWatch.ElapsedMilliseconds} ms)");
         return decryptedBytes.ToArray();
     }
 
