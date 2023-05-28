@@ -35,14 +35,19 @@ public class CypherHelper
     }
 
 
-    // Вспомогательная функция для получения массива byte[] с исходным текстом
+
+    // Получить строку с байтами (двоичная сс) по массиву byte[]
+    public static string GetByteString(byte[] bytes) => 
+        string.Join(string.Empty, bytes.Select(b => Convert.ToString(b, 2).PadLeft(8, '0')));
+
+    // Получить массива byte[] с исходным текстом
     public static byte[] GetOpenText() => ReadFromFile(fileNameOpen);
 
 
-    // Вспомогательная функция для конвертации строки в массив byte[]
+    // Конвертация строки в массив byte[]
     public static byte[] GetBytes(string str) => Encoding.UTF8.GetBytes(str);
 
 
-    // Вспомогательная функция для конвертации массива byte[] в строку
+    // Конвертация массива byte[] в строку
     public static string GetString(byte[] bytes) => Encoding.UTF8.GetString(bytes);
 }

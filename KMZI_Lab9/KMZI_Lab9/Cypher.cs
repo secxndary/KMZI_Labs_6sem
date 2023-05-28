@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Collections;
+using System.Numerics;
 namespace KMZI_Lab9;
 
 
@@ -22,7 +23,6 @@ public class Cypher
     }
 
 
-
     // Сгенерировать нормальную последовтальность
     // e - открытый ключ
     public static List<BigInteger> GeneratePublicKey(List<BigInteger> privateKey, BigInteger a, BigInteger n)
@@ -44,8 +44,35 @@ public class Cypher
     }
 
 
+    // Зашифрование
+    public static List<BigInteger> Encrypt(List<BigInteger> publicKey, byte[] plaintext)
+    {
+        var encryptedList = new List<BigInteger>();
 
-    // Сгенерировать больше число размером n бит
+        foreach (byte b in plaintext)
+        {
+            string binaryString = Convert.ToString(b, 2);
+
+            var positions = new List<int>();
+            for (int i = 0; i < binaryString.Length; i++)
+                if (binaryString[i] == '1')
+                    positions.Add(i);
+
+            var sum = BigInteger.Zero;
+            foreach (int position in positions)
+                if (position < publicKey.Count)
+                    sum += publicKey[position];
+
+            encryptedList.Add(sum);
+        }
+
+        return encryptedList;
+    }
+
+
+
+
+    // Сгенерировать большое число размером n бит
     public static BigInteger GenerateRandomNumber(int n)
     {
         var random = new Random();
@@ -60,7 +87,6 @@ public class Cypher
         return randomNumber;
     }
 
-
     // Генерация числа, взаимно простого с n
     public static BigInteger GenerateCoprime(BigInteger n)
     {
@@ -73,6 +99,14 @@ public class Cypher
         }
     }
 
+    // Получить строку в байтах
+    public static string GetBytes(string str)
+    {
+        var res = "";
+        for (int i = 0; i < str.Length; i++)
+            res += Convert.ToString(str[i], 2);
+        return res;
+    }
 
     // Получить сумму чисел в List<BigInteger>
     public static BigInteger Sum(List<BigInteger> numbers)
@@ -82,7 +116,6 @@ public class Cypher
             sum += number;
         return sum;
     }
-
 
     // Вспомогательный метод для проверки, являются ли два числа простыми
     private static bool AreRelativelyPrime(BigInteger a, BigInteger b)
