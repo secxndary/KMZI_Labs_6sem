@@ -2,7 +2,7 @@
 using KMZI_Lab10;
 
 const string fileNameEncryptRSA = "encrypt_rsa.txt";
-//const string fileNameDecryptRSA = "decrypt_rsa.txt";
+const string fileNameDecryptRSA = "decrypt_rsa.txt";
 //const string fileNameEncryptElGamal = "encrypt_el_gamal.txt";
 //const string fileNameDecryptElGamal = "decrypt_el_gamal.txt";
 
@@ -20,3 +20,5 @@ using (var rsa = new RSACryptoServiceProvider())
 
 var encryptedText = RSACypher.Encrypt(openText, publicKey);
 CypherHelper.WriteToFile(encryptedText, fileNameEncryptRSA);
+var decryptedText = RSACypher.Decrypt(encryptedText, privateKey);
+CypherHelper.WriteToFile(decryptedText, fileNameDecryptRSA);
