@@ -13,7 +13,6 @@ var a = Cypher.GenerateCoprime(n);
 var publicKey = Cypher.GeneratePublicKey(privateKey, a, n);
 
 
-Console.WriteLine("==================================\n");
 var openText = CypherHelper.GetOpenText();
 var encryptedText = Cypher.Encrypt(publicKey, openText);
 var decryptedText = Cypher.Decrypt(privateKey, encryptedText, a, n);
@@ -21,7 +20,3 @@ CypherHelper.WriteToFile(encryptedText, fileNameEncrypt);
 CypherHelper.WriteToFile(decryptedText, fileNameDecrypt);
 
 
-Console.WriteLine("\n=========  Private Key  ==========");
-privateKey.ForEach(x => Console.WriteLine(x));
-Console.WriteLine("\n==========  Public Key  ==========");
-publicKey.ForEach(x => Console.WriteLine(x));

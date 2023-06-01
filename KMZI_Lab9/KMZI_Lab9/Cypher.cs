@@ -12,7 +12,7 @@ public class Cypher
     {
         List<BigInteger> sequence = new List<BigInteger>();
         BigInteger term = initialNumber;
-        quantityOfNumbers = 8;  // заглушка
+        //quantityOfNumbers = 8;  // заглушка
 
         for (int i = 0; i < quantityOfNumbers; i++)
         {
