@@ -28,9 +28,9 @@ CypherHelper.WriteToFile(decryptedTextRSA, fileNameDecryptRSA);
 
 
 var p = 29;
-var q = 7;
+var g = 7;
 var x = 10;
-var elGamal = new ElGamalCypher(p, q, x);
+var elGamal = new ElGamalCypher(p, g, x);
 
 var encryptedTextElGamal = elGamal.Encrypt(openText);
 var decryptedTextElGamal = elGamal.Decrypt(encryptedTextElGamal);
