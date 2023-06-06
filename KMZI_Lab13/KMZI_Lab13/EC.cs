@@ -1,6 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-
+﻿using System.Diagnostics;
 namespace KMZI_Lab13;
 
 

@@ -1,11 +1,7 @@
-﻿using System.Diagnostics;
-using KMZI_Lab13;
-using static System.Net.Mime.MediaTypeNames;
-
+﻿using KMZI_Lab13;
 var a = -1;
 var b = 1;
 var p = 751;
-
 
 
 // Задание 1.1
@@ -39,7 +35,6 @@ Console.WriteLine("\n\n");
 
 
 
-
 // Задание 2
 var openText = "ВалдайцевАлександр";
 var d = 12;
@@ -47,5 +42,8 @@ int[] G = { 0, 1 };
 
 var encryptedText = EC.Encrypt(openText, G, a, p, d);
 var decryptedText = EC.Decrypt(encryptedText, a, p, d);
-Console.WriteLine($"Encrypted text: {string.Join(" ", encryptedText.Cast<int>())}");
-Console.WriteLine($"Decrypted text: {decryptedText}");
+
+Console.Write($"Encrypted text: ");
+foreach (var item in encryptedText)
+    Console.Write($"{item} ");
+Console.WriteLine($"\nDecrypted text: {decryptedText}");
