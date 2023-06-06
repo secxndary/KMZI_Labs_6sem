@@ -21,8 +21,8 @@ Console.WriteLine("\n\n");
 var k = 9;
 var l = 7;
 
-int[] P = { 316, 523 };
-int[] Q = { 582, 99 };
+int[] P = { 106, 24 };
+int[] Q = { 130, 14 };
 int[] R = EC.Sum(P, Q, p);
 
 int[] kP = EC.Multiply(k, P, a, p);
