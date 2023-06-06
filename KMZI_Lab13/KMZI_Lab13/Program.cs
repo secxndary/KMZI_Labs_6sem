@@ -21,12 +21,15 @@ Console.WriteLine("\n\n");
 var k = 9;
 var l = 7;
 
-int[] P = { 74, 170 };
-int[] Q = { 53, 277 };
-int[] R = { 86, 25 };
+int[] P = { 316, 523 };
+int[] Q = { 582, 99 };
+int[] R = EC.Sum(P, Q, p);
 
 int[] kP = EC.Multiply(k, P, a, p);
 int[] lQ = EC.Multiply(l, Q, a, p);
 
-Console.WriteLine($"а) kP = {k}P = {EC.FormatPoint(kP)}");
-Console.WriteLine($"б) P + Q = {EC.FormatPoint(EC.CalculateSum(P, Q, p))}");
+Console.WriteLine($"P = {EC.Format(P)}\nQ = {EC.Format(Q)}");
+Console.WriteLine($"а) kP = {k}P = {EC.Format(kP)}");
+Console.WriteLine($"б) P + Q = R = {EC.Format(EC.Sum(P, Q, p))}");
+Console.WriteLine($"в) kP + lQ - R = {EC.Format(EC.Sum(EC.Sum(kP, lQ, p), EC.InversePoint(R), p))}");
+Console.WriteLine($"г) P - Q + R = {EC.Format(EC.Sum(EC.Sum(P, EC.InversePoint(Q), p), R, p))}");

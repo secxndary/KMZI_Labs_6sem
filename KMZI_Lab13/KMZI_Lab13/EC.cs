@@ -19,7 +19,7 @@ public class EC
 
 
     // Сумма точек P и Q
-    public static int[] CalculateSum(int[] P, int[] Q, int p)
+    public static int[] Sum(int[] P, int[] Q, int p)
     {
         int lambda = CalculateLambda(P, Q, p);
         int x = GCD.Mod(lambda * lambda - P[0] - Q[0], p);
@@ -29,7 +29,7 @@ public class EC
 
 
     // Сумма точек P и P
-    public static int[] CalculateSum(int[] P, int a, int p)
+    public static int[] Sum(int[] P, int a, int p)
     {
         int lambda = CalculateLambda(P, a, p);
         int x = GCD.Mod(lambda * lambda - P[0] - P[0], p);
@@ -43,16 +43,16 @@ public class EC
     {
         int[] kP = P;
         for (int i = 0; i < (int)Math.Log(k, 2); i++)
-            kP = CalculateSum(kP, a, p);
+            kP = Sum(kP, a, p);
         k = k - (int)Math.Pow(2, (int)Math.Log(k, 2));
         while (k > 1)
         {
             for (int i = 0; i < (int)Math.Log(k, 2); i++)
-                kP = CalculateSum(kP, CalculateSum(P, a, p), p);
+                kP = Sum(kP, Sum(P, a, p), p);
             k = k - (int)Math.Pow(2, (int)Math.Log(k, 2));
         }
         if (k == 1)
-            kP = CalculateSum(kP, P, p);
+            kP = Sum(kP, P, p);
         return kP;
     }
 
@@ -74,5 +74,5 @@ public class EC
     public static int[] InversePoint(int[] P) => new int[2] { P[0], (-1) * P[1] };
 
     // Вывести точку
-    public static string FormatPoint(int[] point) => $"({point[0]}, {point[1]})";
+    public static string Format(int[] point) => $"({point[0]}, {point[1]})";
 }
