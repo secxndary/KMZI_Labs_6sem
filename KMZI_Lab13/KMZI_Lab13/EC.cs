@@ -72,4 +72,7 @@ public class EC
 
     // Вычислить -P (принять y = -y)
     public static int[] InversePoint(int[] P) => new int[2] { P[0], (-1) * P[1] };
+
+    // Вывести точку
+    public static string FormatPoint(int[] point) => $"({point[0]}, {point[1]})";
 }
