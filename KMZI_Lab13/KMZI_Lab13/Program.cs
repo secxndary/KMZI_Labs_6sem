@@ -1,4 +1,6 @@
-﻿using KMZI_Lab13;
+﻿using System.Diagnostics;
+using KMZI_Lab13;
+using static System.Net.Mime.MediaTypeNames;
 
 var a = -1;
 var b = 1;
@@ -33,3 +35,17 @@ Console.WriteLine($"а) kP = {k}P = {EC.Format(kP)}");
 Console.WriteLine($"б) P + Q = R = {EC.Format(EC.Sum(P, Q, p))}");
 Console.WriteLine($"в) kP + lQ - R = {EC.Format(EC.Sum(EC.Sum(kP, lQ, p), EC.InversePoint(R), p))}");
 Console.WriteLine($"г) P - Q + R = {EC.Format(EC.Sum(EC.Sum(P, EC.InversePoint(Q), p), R, p))}");
+Console.WriteLine("\n\n");
+
+
+
+
+// Задание 2
+var openText = "ВалдайцевАлександр";
+var d = 12;
+int[] G = { 0, 1 };
+
+var encryptedText = EC.Encrypt(openText, G, a, p, d);
+var decryptedText = EC.Decrypt(encryptedText, a, p, d);
+Console.WriteLine($"Encrypted text: {string.Join(" ", encryptedText.Cast<int>())}");
+Console.WriteLine($"Decrypted text: {decryptedText}");
