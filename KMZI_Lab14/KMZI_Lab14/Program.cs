@@ -10,7 +10,7 @@ namespace KMZI_Lab14
             var fileNameEncryptByRows = @"C:\Users\valda\source\repos\semester#6\КМЗИ\KMZI_Lab14\KMZI_Lab14\Images\ecnrypted_by_rows.bmp";
             var fileNameEncryptByColumns = @"C:\Users\valda\source\repos\semester#6\КМЗИ\KMZI_Lab14\KMZI_Lab14\Images\ecnrypted_by_columns.bmp";
             var fileNameMatrixSample = @"C:\Users\valda\source\repos\semester#6\КМЗИ\KMZI_Lab14\KMZI_Lab14\Images\matrix_sample.bmp";
-            var fileNameMatrixEncryptByRows = @"C:\Users\valda\source\repos\semester#6\КМЗИ\KMZI_Lab14\KMZI_Lab14\Images\matrix_encrypt.bmp";
+            var fileNameMatrixEncryptByRows = @"C:\Users\valda\source\repos\semester#6\КМЗИ\KMZI_Lab14\KMZI_Lab14\Images\matrix_encrypt_rows.bmp";
             var fileNameMatrixEncryptByColumns = @"C:\Users\valda\source\repos\semester#6\КМЗИ\KMZI_Lab14\KMZI_Lab14\Images\matrix_encrypt_columns.bmp";
 
             var openTextByRows = "ValdaitsevAlexanderDenisovich";
