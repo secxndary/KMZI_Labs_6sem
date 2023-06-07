@@ -47,7 +47,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Steganography.cs" />
-    <Compile Include="Steganography2.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
