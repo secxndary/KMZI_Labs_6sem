@@ -1,2 +1,12 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿namespace KMZI_Lab15
+{
+    public class Lab15Main
+    {
+        public static void Main()
+        {
+            var openText = "qw";
+            Steganography.HideMessage(openText);
+            Steganography.ShowMessage();
+        }
+    }
+}
