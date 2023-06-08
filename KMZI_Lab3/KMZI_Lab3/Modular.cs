@@ -80,13 +80,9 @@ public class Modular
             {
                 result += divisor.ToString();
                 if (power > 1)
-                {
                     result += "^" + power.ToString();
-                }
                 if (number > 1)
-                {
                     result += " * ";
-                }
             }
             divisor++;
         }
