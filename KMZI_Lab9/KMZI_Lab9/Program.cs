@@ -20,3 +20,10 @@ CypherHelper.WriteToFile(encryptedText, fileNameEncrypt);
 CypherHelper.WriteToFile(decryptedText, fileNameDecrypt);
 
 
+Console.WriteLine("\n=========  Private Key  ==========");
+foreach (var item in privateKey)
+    Console.WriteLine(item);
+
+Console.WriteLine("\n==========  Public Key  ==========");
+foreach (var item in publicKey)
+    Console.WriteLine(item);
